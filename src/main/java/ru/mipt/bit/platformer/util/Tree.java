@@ -14,8 +14,4 @@ public class Tree extends Object{
         super(texturePath);
         treeObstacleCoordinates = new GridPoint2(treeCoordinatesX, treeCoordinatesY);
     }
-//
-//    public void drawTree(TiledMapTileLayer groundLayer){
-//        moveRectangleAtTileCenter(groundLayer, this.getObjectRectangle(), treeObstacleCoordinates);
-//    }
 }

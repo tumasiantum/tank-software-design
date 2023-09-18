@@ -28,31 +28,13 @@ public class Level {
         return groundLayer;
     }
 
-    public void setGroundLayer(TiledMapTileLayer groundLayer) {
-        this.groundLayer = groundLayer;
-    }
-
     public TiledMap getLevel() {
         return level;
     }
-
-    public void setLevel(TiledMap level) {
-        this.level = level;
-    }
-
     public MapRenderer getLevelRenderer() {
         return levelRenderer;
     }
-
-    public void setLevelRenderer(MapRenderer levelRenderer) {
-        this.levelRenderer = levelRenderer;
-    }
-
     public TileMovement getTileMovement() {
         return tileMovement;
-    }
-
-    public void setTileMovement(TileMovement tileMovement) {
-        this.tileMovement = tileMovement;
     }
 }
