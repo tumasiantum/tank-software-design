@@ -97,7 +97,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
             if (isEqual(playerMovementProgress, 1f)) {
                 // check potential player destination for collision with obstacles
-                if (!tree2.getTreeObstacleCoordinates().equals(incrementedY(playerCoordinates))) {
+                if (isThereCollision(true, true)) {
                     playerDestinationCoordinates.y++;
                     playerMovementProgress = 0f;
                 }
@@ -106,7 +106,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         }
         if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A)) {
             if (isEqual(playerMovementProgress, 1f)) {
-                if (!tree2.getTreeObstacleCoordinates().equals(decrementedX(playerCoordinates))) {
+                if (isThereCollision(false, false)) {
                     playerDestinationCoordinates.x--;
                     playerMovementProgress = 0f;
                 }
@@ -115,7 +115,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         }
         if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S)) {
             if (isEqual(playerMovementProgress, 1f)) {
-                if (!tree2.getTreeObstacleCoordinates().equals(decrementedY(playerCoordinates))) {
+                if (isThereCollision(true, false)) {
                     playerDestinationCoordinates.y--;
                     playerMovementProgress = 0f;
                 }
@@ -124,7 +124,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         }
         if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
             if (isEqual(playerMovementProgress, 1f)) {
-                if (!tree2.getTreeObstacleCoordinates().equals(incrementedX(playerCoordinates))) {
+                if (isThereCollision(false, true)) {
                     playerDestinationCoordinates.x++;
                     playerMovementProgress = 0f;
                 }
@@ -156,6 +156,19 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         // submit all drawing requests
         batch.end();
+    }
+
+    private boolean isThereCollision(boolean direction, boolean sign) {
+        if (direction)
+            if (sign)
+                return !tree2.getTreeObstacleCoordinates().equals(incrementedY(player2.getPlayerCoordinates()));
+            else
+                return !tree2.getTreeObstacleCoordinates().equals(decrementedY(player2.getPlayerCoordinates()));
+        else
+        if (sign)
+            return !tree2.getTreeObstacleCoordinates().equals(incrementedX(player2.getPlayerCoordinates()));
+        else
+            return !tree2.getTreeObstacleCoordinates().equals(decrementedX(player2.getPlayerCoordinates()));
     }
 
     @Override
