@@ -15,7 +15,10 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
+import ru.mipt.bit.platformer.util.Level;
+import ru.mipt.bit.platformer.util.Player;
 import ru.mipt.bit.platformer.util.TileMovement;
+import ru.mipt.bit.platformer.util.Tree;
 
 import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
@@ -42,36 +45,44 @@ public class GameDesktopLauncher implements ApplicationListener {
     private float playerMovementProgress = 1f;
     private float playerRotation;
 
-    private Texture greenTreeTexture;
-    private TextureRegion treeObstacleGraphics;
-    private GridPoint2 treeObstacleCoordinates = new GridPoint2();
-    private Rectangle treeObstacleRectangle = new Rectangle();
+    //private Texture greenTreeTexture;
+    //private TextureRegion treeObstacleGraphics;
+    //private GridPoint2 treeObstacleCoordinates = new GridPoint2();
+    //private Rectangle treeObstacleRectangle = new Rectangle();
+    Level level2;
+    Tree tree2;
+    Player player2;
 
     @Override
     public void create() {
         batch = new SpriteBatch();
-
         // load level tiles
-        level = new TmxMapLoader().load("level.tmx");
-        levelRenderer = createSingleLayerMapRenderer(level, batch);
-        TiledMapTileLayer groundLayer = getSingleLayer(level);
-        tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
-
+        //level = new TmxMapLoader().load("level.tmx");
+        //levelRenderer = createSingleLayerMapRenderer(level, batch);
+        //TiledMapTileLayer groundLayer = getSingleLayer(level);
+        //tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
+        level2 = new Level("level.tmx", batch);
+        tileMovement = level2.getTileMovement();
+        levelRenderer = level2.getLevelRenderer();
+        TiledMapTileLayer groundLayer = level2.getGroundLayer();
+        player2 = new Player("images/tank_blue.png", 1, 1,0f);
         // Texture decodes an image file and loads it into GPU memory, it represents a native resource
-        blueTankTexture = new Texture("images/tank_blue.png");
+        //blueTankTexture = new Texture("images/tank_blue.png");
         // TextureRegion represents Texture portion, there may be many TextureRegion instances of the same Texture
-        playerGraphics = new TextureRegion(blueTankTexture);
-        playerRectangle = createBoundingRectangle(playerGraphics);
+        playerGraphics = player2.getObjectGraphics();
+        playerRectangle = player2.getPlayerRectangle();
         // set player initial position
-        playerDestinationCoordinates = new GridPoint2(1, 1);
-        playerCoordinates = new GridPoint2(playerDestinationCoordinates);
-        playerRotation = 0f;
+        playerDestinationCoordinates = player2.getPlayerDestinationCoordinates();
+        playerCoordinates = player2.getPlayerCoordinates();
+        playerRotation = player2.getPlayerRotation();
 
-        greenTreeTexture = new Texture("images/greenTree.png");
-        treeObstacleGraphics = new TextureRegion(greenTreeTexture);
-        treeObstacleCoordinates = new GridPoint2(1, 3);
-        treeObstacleRectangle = createBoundingRectangle(treeObstacleGraphics);
-        moveRectangleAtTileCenter(groundLayer, treeObstacleRectangle, treeObstacleCoordinates);
+//        greenTreeTexture = new Texture("images/greenTree.png");
+//        treeObstacleGraphics = new TextureRegion(greenTreeTexture);
+//        treeObstacleCoordinates = new GridPoint2(1, 3);
+//        treeObstacleRectangle = createBoundingRectangle(treeObstacleGraphics);
+        tree2 = new Tree("images/greenTree.png", 1, 4);
+        //moveRectangleAtTileCenter(groundLayer, treeObstacleRectangle, treeObstacleCoordinates);
+        moveRectangleAtTileCenter(groundLayer, tree2.getObjectRectangle(), tree2.getTreeObstacleCoordinates());
     }
 
     @Override
@@ -86,7 +97,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
             if (isEqual(playerMovementProgress, 1f)) {
                 // check potential player destination for collision with obstacles
-                if (!treeObstacleCoordinates.equals(incrementedY(playerCoordinates))) {
+                if (!tree2.getTreeObstacleCoordinates().equals(incrementedY(playerCoordinates))) {
                     playerDestinationCoordinates.y++;
                     playerMovementProgress = 0f;
                 }
@@ -95,7 +106,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         }
         if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A)) {
             if (isEqual(playerMovementProgress, 1f)) {
-                if (!treeObstacleCoordinates.equals(decrementedX(playerCoordinates))) {
+                if (!tree2.getTreeObstacleCoordinates().equals(decrementedX(playerCoordinates))) {
                     playerDestinationCoordinates.x--;
                     playerMovementProgress = 0f;
                 }
@@ -104,7 +115,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         }
         if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S)) {
             if (isEqual(playerMovementProgress, 1f)) {
-                if (!treeObstacleCoordinates.equals(decrementedY(playerCoordinates))) {
+                if (!tree2.getTreeObstacleCoordinates().equals(decrementedY(playerCoordinates))) {
                     playerDestinationCoordinates.y--;
                     playerMovementProgress = 0f;
                 }
@@ -113,7 +124,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         }
         if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
             if (isEqual(playerMovementProgress, 1f)) {
-                if (!treeObstacleCoordinates.equals(incrementedX(playerCoordinates))) {
+                if (!tree2.getTreeObstacleCoordinates().equals(incrementedX(playerCoordinates))) {
                     playerDestinationCoordinates.x++;
                     playerMovementProgress = 0f;
                 }
@@ -140,7 +151,8 @@ public class GameDesktopLauncher implements ApplicationListener {
         drawTextureRegionUnscaled(batch, playerGraphics, playerRectangle, playerRotation);
 
         // render tree obstacle
-        drawTextureRegionUnscaled(batch, treeObstacleGraphics, treeObstacleRectangle, 0f);
+        //drawTextureRegionUnscaled(batch, treeObstacleGraphics, treeObstacleRectangle, 0f);
+        drawTextureRegionUnscaled(batch, tree2.getObjectGraphics(), tree2.getObjectRectangle(), 0f);
 
         // submit all drawing requests
         batch.end();
@@ -164,9 +176,9 @@ public class GameDesktopLauncher implements ApplicationListener {
     @Override
     public void dispose() {
         // dispose of all the native resources (classes which implement com.badlogic.gdx.utils.Disposable)
-        greenTreeTexture.dispose();
-        blueTankTexture.dispose();
-        level.dispose();
+        tree2.getObjectTexture().dispose();
+        player2.getObjectTexture().dispose();
+        level2.getLevel().dispose();
         batch.dispose();
     }
 
