@@ -18,10 +18,10 @@ public class Level {
     private TiledMapTileLayer groundLayer;
 
     public Level(String mapPath, Batch batch){
-        level = new TmxMapLoader().load(mapPath);
-        levelRenderer = createSingleLayerMapRenderer(level, batch);
-        groundLayer = getSingleLayer(level);
-        tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
+        this.level = new TmxMapLoader().load(mapPath);
+        this.levelRenderer = createSingleLayerMapRenderer(level, batch);
+        this.groundLayer = getSingleLayer(level);
+        this.tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
     }
 
     public TiledMapTileLayer getGroundLayer() {

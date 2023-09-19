@@ -6,6 +6,7 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.createBoundingRectangle;
 
 public class Object {
 
+    private float objectRotation;
     private Texture objectTexture;
     private TextureRegion objectGraphics;
     private Rectangle objectRectangle;
@@ -22,9 +23,22 @@ public class Object {
         return objectTexture;
     }
 
-    public Object (String texturePath) {
-        objectTexture = new Texture(texturePath);
-        objectGraphics = new TextureRegion(objectTexture);
-        objectRectangle = createBoundingRectangle(objectGraphics);
+    public float getObjectRotation() {
+        return objectRotation;
+    }
+
+    public void setObjectRotation(float objectRotation) {
+        this.objectRotation = objectRotation;
+    }
+
+    public void setObjectRectangle(Rectangle objectRectangle) {
+        this.objectRectangle = objectRectangle;
+    }
+
+    public Object (String texturePath, float objectRotation) {
+        this.objectTexture = new Texture(texturePath);
+        this.objectGraphics = new TextureRegion(objectTexture);
+        this.objectRectangle = createBoundingRectangle(objectGraphics);
+        this.objectRotation = objectRotation;
     }
 }

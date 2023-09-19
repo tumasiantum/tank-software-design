@@ -11,7 +11,7 @@ public class Tree extends Object{
     }
 
     public Tree(String texturePath, int treeCoordinatesX, int treeCoordinatesY) {
-        super(texturePath);
-        treeObstacleCoordinates = new GridPoint2(treeCoordinatesX, treeCoordinatesY);
+        super(texturePath, 0f);
+        this.treeObstacleCoordinates = new GridPoint2(treeCoordinatesX, treeCoordinatesY);
     }
 }

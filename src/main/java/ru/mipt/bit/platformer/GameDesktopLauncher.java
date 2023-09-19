@@ -9,9 +9,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import ru.mipt.bit.platformer.util.Level;
+import ru.mipt.bit.platformer.util.Object;
 import ru.mipt.bit.platformer.util.Player;
 import ru.mipt.bit.platformer.util.TileMovement;
 import ru.mipt.bit.platformer.util.Tree;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
@@ -27,6 +31,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     private float playerMovementProgress = 1f;
     Tree tree2;
     Player player2;
+    List<Object> objectList = new ArrayList<>();
 
     @Override
     public void create() {
@@ -37,33 +42,23 @@ public class GameDesktopLauncher implements ApplicationListener {
         TiledMapTileLayer groundLayer = level2.getGroundLayer();
         player2 = new Player("images/tank_blue.png", 1, 1,0f);
         tree2 = new Tree("images/greenTree.png", 1, 4);
+        objectList.add(player2);
+        objectList.add(tree2);
         moveRectangleAtTileCenter(groundLayer, tree2.getObjectRectangle(), tree2.getTreeObstacleCoordinates());
     }
 
     @Override
     public void render() {
         // clear the screen
-        Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
-        Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
+        clearScreen();
 
         // get time passed since the last render
         float deltaTime = Gdx.graphics.getDeltaTime();
 
-        if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
-            playerMovementProgress = player2.playerMovement("UP", tree2, playerMovementProgress);
-        }
-        if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A)) {
-            playerMovementProgress = player2.playerMovement("LEFT", tree2, playerMovementProgress);
-        }
-        if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S)) {
-            playerMovementProgress = player2.playerMovement("DOWN", tree2, playerMovementProgress);
-        }
-        if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
-            playerMovementProgress = player2.playerMovement("RIGHT", tree2, playerMovementProgress);
-        }
+        movePlayer(player2);
 
         // calculate interpolated player screen coordinates
-        tileMovement.moveRectangleBetweenTileCenters(player2.getPlayerRectangle(), player2.getPlayerCoordinates(), player2.getPlayerDestinationCoordinates(), playerMovementProgress);
+        tileMovement.moveRectangleBetweenTileCenters(player2.getObjectRectangle(), player2.getPlayerCoordinates(), player2.getPlayerDestinationCoordinates(), playerMovementProgress);
 
         playerMovementProgress = continueProgress(playerMovementProgress, deltaTime, MOVEMENT_SPEED);
         if (isEqual(playerMovementProgress, 1f)) {
@@ -78,13 +73,39 @@ public class GameDesktopLauncher implements ApplicationListener {
         batch.begin();
 
         // render player
-        drawTextureRegionUnscaled(batch, player2.getObjectGraphics(), player2.getPlayerRectangle(), player2.getPlayerRotation());
 
+        drawAllTextureRegionUnscaled(objectList);
         // render tree obstacle
-        drawTextureRegionUnscaled(batch, tree2.getObjectGraphics(), tree2.getObjectRectangle(), 0f);
+//        drawTextureRegionUnscaled(batch, tree2.getObjectGraphics(), tree2.getObjectRectangle(), tree2.getObjectRotation());
 
         // submit all drawing requests
         batch.end();
+    }
+
+    private void movePlayer(Player player) {
+        if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
+            playerMovementProgress = player.playerMovement("UP", tree2, playerMovementProgress);
+        }
+        if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A)) {
+            playerMovementProgress = player.playerMovement("LEFT", tree2, playerMovementProgress);
+        }
+        if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S)) {
+            playerMovementProgress = player.playerMovement("DOWN", tree2, playerMovementProgress);
+        }
+        if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
+            playerMovementProgress = player.playerMovement("RIGHT", tree2, playerMovementProgress);
+        }
+    }
+
+    private static void clearScreen() {
+        Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
+        Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
+    }
+
+    private void drawAllTextureRegionUnscaled(List<Object> objectList){
+        for (Object object: objectList) {
+            drawTextureRegionUnscaled(batch, object.getObjectGraphics(), object.getObjectRectangle(), object.getObjectRotation());
+        }
     }
 
     @Override

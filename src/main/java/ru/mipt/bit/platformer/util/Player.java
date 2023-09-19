@@ -12,32 +12,22 @@ public class Player extends Object {
         return playerCoordinates;
     }
 
-    public float getPlayerRotation(){
-        return playerRotation;
-    }
-
     public GridPoint2 getPlayerDestinationCoordinates() {
         return playerDestinationCoordinates;
-    }
-
-    public Rectangle getPlayerRectangle() {
-        return playerRectangle;
     }
 
     public Player (String texturePath,
                    int playerCoordinatesX,
                    int playerCoordinatesY,
                    float playerRotation) {
-        super(texturePath);
-        playerDestinationCoordinates = new GridPoint2(playerCoordinatesX, playerCoordinatesY);
-        playerCoordinates = new GridPoint2(playerDestinationCoordinates);
-        playerRectangle = createBoundingRectangle(this.getObjectGraphics());
+        super(texturePath, playerRotation);
+        this.playerDestinationCoordinates = new GridPoint2(playerCoordinatesX, playerCoordinatesY);
+        this.playerCoordinates = new GridPoint2(playerDestinationCoordinates);
+        //this.playerRectangle = createBoundingRectangle(this.getObjectGraphics());
     }
 
-    private float playerRotation;
     private GridPoint2 playerDestinationCoordinates;
     private GridPoint2 playerCoordinates;
-    private Rectangle playerRectangle;
 
     private void playerChangeCoordinate(String way){
         switch (way){
@@ -64,7 +54,7 @@ public class Player extends Object {
                 rotation = -180f;
                 break;
         }
-        playerRotation = rotation;
+        this.setObjectRotation(rotation);
     }
 
     private boolean isThereCollision(Tree tree, String way) {
