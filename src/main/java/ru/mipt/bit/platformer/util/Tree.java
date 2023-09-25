@@ -2,16 +2,15 @@ package ru.mipt.bit.platformer.util;
 
 import com.badlogic.gdx.math.GridPoint2;
 
-public class Tree extends Object{
+public class Tree{
 
-    private final GridPoint2 treeObstacleCoordinates;
+    private final GridPoint2 coordinates;
 
-    public GridPoint2 getTreeObstacleCoordinates() {
-        return treeObstacleCoordinates;
+    public Tree (GridPoint2 coordinates) {
+        this.coordinates = coordinates;
     }
 
-    public Tree(String texturePath, int treeCoordinatesX, int treeCoordinatesY) {
-        super(texturePath, 0f);
-        this.treeObstacleCoordinates = new GridPoint2(treeCoordinatesX, treeCoordinatesY);
+    public GridPoint2 getCoordinates() {
+        return coordinates;
     }
 }
