@@ -1,6 +1,7 @@
 package ru.mipt.bit.platformer.util;
 
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.util.Graphics.GraphicsObject;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -24,9 +25,6 @@ public class Tank {
         this.destinationCoordinates = coordinates;
         this.direction = direction;
     }
-//    private boolean isThereCollision(Tree tree, String way) {
-//        return !tree.getTreeObstacleCoordinates().equals(futureWay(way));
-//    }
 
     public GridPoint2 getCoordinates() {
         return coordinates;
@@ -65,7 +63,7 @@ public class Tank {
         return direction;
     }
 
-    public void moveTank(Direction movingDirection, Graphics tankGraphics, HashMap<Object, GridPoint2> obstacleHashMap) {
+    public void moveTank(Direction movingDirection, GraphicsObject tankGraphics, HashMap<Object, GridPoint2> obstacleHashMap) {
         if (movingDirection != null & this.isMoving()) {
             GridPoint2 tankTargetCoordinates = movingDirection.apply(this.getCoordinates());
             if (!collides(obstacleHashMap, tankTargetCoordinates)) {
