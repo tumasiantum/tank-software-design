@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.util.*;
+import ru.mipt.bit.platformer.util.Graphics.GdxTankGraphics;
 import ru.mipt.bit.platformer.util.Graphics.GraphicsController;
 import ru.mipt.bit.platformer.util.Graphics.GraphicsObject;
 
@@ -25,7 +26,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     private Level level;
     private Tank tank;
     private InputController inputController;
-    private GraphicsObject tankGraphics;
+    private GdxTankGraphics tankGraphics;
     private GraphicsController graphicsController;
 
     @Override
@@ -98,9 +99,11 @@ public class GameDesktopLauncher implements ApplicationListener {
 
 
     private void updateGameState(float deltaTime, Direction movingDirection) {
-        tank.moveTank(movingDirection, tankGraphics, level.getObstacleHashMap());
+        tankGraphics.moveTankPicture(movingDirection);
+        tank.moveTank(movingDirection, level.getObstacleHashMap());
         // calculate interpolated player screen coordinates
-        tileMovement.moveRectangleBetweenTileCenters(tankGraphics.getRectangle(), tank.getCoordinates(), tank.getDestinationCoordinates(), tank.getMovementProgress());
+        Tank tankForDrawing = tankGraphics.getTank();
+        tileMovement.moveRectangleBetweenTileCenters(tankGraphics.getRectangle(), tankForDrawing.getCoordinates(), tankForDrawing.getDestinationCoordinates(), tankForDrawing.getMovementProgress());
         tank.updateState(deltaTime);
     }
 

@@ -14,7 +14,7 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.moveRectangleAtTileCenter
 public class GraphicsController {
     private List<GraphicsObject> graphicsObjectList;
 
-    private List<GraphicsObject> tankGraphicsObjectList;
+    private List<GdxTankGraphics> tankGraphicsObjectList;
     private Level level;
 
     public GraphicsController(Level level) {
@@ -34,13 +34,13 @@ public class GraphicsController {
 
     public void initTankGraphics(){
         for (Tank tank: level.getTankList()) {
-            GdxTankGraphics tankGraphics = new GdxTankGraphics(tank.getDirection());
-            this.graphicsObjectList.add(tankGraphics);
-            this.tankGraphicsObjectList.add(tankGraphics);
+            GdxTankGraphics tankGraphics = new GdxTankGraphics(tank.getDirection(), tank);
+            graphicsObjectList.add(tankGraphics);
+            tankGraphicsObjectList.add(tankGraphics);
         }
     }
 
-    public List<GraphicsObject> getTankGraphicsObjectList() {
+    public List<GdxTankGraphics> getTankGraphicsObjectList() {
         return tankGraphicsObjectList;
     }
 
@@ -50,14 +50,15 @@ public class GraphicsController {
     }
 
     public void dispose(){
-        for (GraphicsObject graphicsObject : this.graphicsObjectList) {
+        for (GraphicsObject graphicsObject : graphicsObjectList) {
             graphicsObject.getTexture().dispose();
         }
     }
 
     public void drawAllTextureRegionUnscaled(Batch batch){
-        for (GraphicsObject graphicsObject : this.graphicsObjectList) {
+        for (GraphicsObject graphicsObject : graphicsObjectList) {
             drawTextureRegionUnscaled(batch, graphicsObject.getTextureRegion(), graphicsObject.getRectangle(), graphicsObject.getDirection().getRotation());
         }
     }
+
 }

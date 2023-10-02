@@ -63,7 +63,7 @@ public class Tank {
         return direction;
     }
 
-    public void moveTank(Direction movingDirection, GraphicsObject tankGraphics, HashMap<Object, GridPoint2> obstacleHashMap) {
+    public void moveTank(Direction movingDirection, HashMap<Object, GridPoint2> obstacleHashMap) {
         if (movingDirection != null & this.isMoving()) {
             GridPoint2 tankTargetCoordinates = movingDirection.apply(this.getCoordinates());
             if (!collides(obstacleHashMap, tankTargetCoordinates)) {
@@ -71,7 +71,7 @@ public class Tank {
                 obstacleHashMap.put(this, tankTargetCoordinates);
             }
             this.rotate(movingDirection);
-            tankGraphics.setDirection(movingDirection);
+//            tankGraphics.setDirection(movingDirection);
         }
     }
 
