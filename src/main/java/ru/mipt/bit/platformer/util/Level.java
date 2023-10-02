@@ -22,7 +22,6 @@ public class Level {
     private TiledMapTileLayer groundLayer;
     private List<Tree> treeList = new ArrayList<>();
     private List<Tank> tankList = new ArrayList<>();
-
     private HashMap<Object, GridPoint2> obstacleHashMap = new HashMap<>();
 
 

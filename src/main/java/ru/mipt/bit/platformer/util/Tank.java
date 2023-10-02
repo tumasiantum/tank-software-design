@@ -18,6 +18,7 @@ public class Tank {
     private GridPoint2 coordinates;
     private GridPoint2 destinationCoordinates;
     private Direction direction;
+    private Boolean rotateProgress = false;
 
     public Tank(GridPoint2 coordinates, Direction direction) {
         this.movementProgress = 1;
@@ -45,6 +46,15 @@ public class Tank {
 
     public void rotate(Direction direction) {
         this.direction = direction;
+        this.rotateProgress = true;
+    }
+
+    public Boolean getRotateProgress() {
+        return rotateProgress;
+    }
+
+    public void setRotateProgress(Boolean rotateProgress) {
+        this.rotateProgress = rotateProgress;
     }
 
     public void updateState(float deltaTime) {
@@ -71,7 +81,6 @@ public class Tank {
                 obstacleHashMap.put(this, tankTargetCoordinates);
             }
             this.rotate(movingDirection);
-//            tankGraphics.setDirection(movingDirection);
         }
     }
 

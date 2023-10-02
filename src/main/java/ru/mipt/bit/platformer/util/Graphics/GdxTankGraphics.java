@@ -17,8 +17,9 @@ public class GdxTankGraphics extends GraphicsObject {
     }
 
     public void moveTankPicture(Direction movingDirection){
-        if (movingDirection != null & !tank.isMoving()) {
+        if (movingDirection != null & tank.getRotateProgress()) {
             this.setDirection(movingDirection);
+            tank.setRotateProgress(Boolean.FALSE);
         }
     }
 }

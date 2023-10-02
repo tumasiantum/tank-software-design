@@ -21,20 +21,15 @@ import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
 public class GameDesktopLauncher implements ApplicationListener {
     private Batch batch;
-    private MapRenderer levelRenderer;
-    private TileMovement tileMovement;
     private Level level;
     private Tank tank;
     private InputController inputController;
-    private GdxTankGraphics tankGraphics;
     private GraphicsController graphicsController;
 
     @Override
     public void create() {
         batch = new SpriteBatch();
         level = new Level("level.tmx", batch);
-        tileMovement = level.getTileMovement();
-        levelRenderer = level.getLevelRenderer();
 
         graphicsController = new GraphicsController(level);
 
@@ -43,18 +38,18 @@ public class GameDesktopLauncher implements ApplicationListener {
         List<GridPoint2> treeCoordinatesList = new ArrayList<>();
         treeCoordinatesList.add(new GridPoint2(3,4));
         treeCoordinatesList.add(new GridPoint2(1,2));
+
         level.createTrees(treeCoordinatesList);
 
         graphicsController.init();
 
         initKeyMappings();
-        tankGraphics = graphicsController.getTankGraphicsObjectList().get(0);
     }
 
     @Override
     public void render() {
         // clear the screen
-        clearScreen();
+        graphicsController.clearScreen();
         // get time passed since the last render
         float deltaTime = Gdx.graphics.getDeltaTime();
         Direction direction = inputController.getDirection();
@@ -87,30 +82,21 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     private void renderGame() {
         // render each tile of the level
-        levelRenderer.render();
+        level.getLevelRenderer().render();
         // start recording all drawing commands
         batch.begin();
         // render all objects
+        graphicsController.renderTanksGraphic();
         graphicsController.drawAllTextureRegionUnscaled(batch);
         // submit all drawing requests
         batch.end();
     }
 
-
-
     private void updateGameState(float deltaTime, Direction movingDirection) {
-        tankGraphics.moveTankPicture(movingDirection);
         tank.moveTank(movingDirection, level.getObstacleHashMap());
-        // calculate interpolated player screen coordinates
-        Tank tankForDrawing = tankGraphics.getTank();
-        tileMovement.moveRectangleBetweenTileCenters(tankGraphics.getRectangle(), tankForDrawing.getCoordinates(), tankForDrawing.getDestinationCoordinates(), tankForDrawing.getMovementProgress());
         tank.updateState(deltaTime);
     }
 
-    private static void clearScreen() {
-        Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
-        Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
-    }
 
     private void initKeyMappings() {
         inputController = new InputController();
