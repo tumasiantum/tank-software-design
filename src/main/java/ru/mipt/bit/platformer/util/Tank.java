@@ -1,7 +1,6 @@
 package ru.mipt.bit.platformer.util;
 
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.util.Graphics.GraphicsObject;
 
 import java.util.HashMap;
 import java.util.Set;
