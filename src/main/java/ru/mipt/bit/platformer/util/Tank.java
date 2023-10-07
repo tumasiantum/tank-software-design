@@ -2,13 +2,12 @@ package ru.mipt.bit.platformer.util;
 
 import com.badlogic.gdx.math.GridPoint2;
 
-import java.util.HashMap;
 import java.util.Set;
 
 import static com.badlogic.gdx.math.MathUtils.isEqual;
-import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
+import static ru.mipt.bit.platformer.util.Graphics.GdxGameUtils.*;
 
-public class Tank {
+public class Tank implements GameObject{
     private static final float MOVEMENT_SPEED = 0.4f;
     public static final float MOVEMENT_COMPLETED = 1f;
     public static final int MOVEMENT_STARTED = 0;
@@ -34,34 +33,12 @@ public class Tank {
         return destinationCoordinates;
     }
 
-    public boolean isMoving() {
-        return isEqual(movementProgress, MOVEMENT_COMPLETED);
-    }
-
-    public void moveTo(GridPoint2 tankTargetCoordinates) {
-        destinationCoordinates = tankTargetCoordinates;
-        movementProgress = MOVEMENT_STARTED;
-    }
-
-    public void rotate(Direction direction) {
-        this.direction = direction;
-        this.rotateProgress = true;
-    }
-
     public Boolean getRotateProgress() {
         return rotateProgress;
     }
 
     public void setRotateProgress(Boolean rotateProgress) {
         this.rotateProgress = rotateProgress;
-    }
-
-    public void updateState(float deltaTime) {
-        movementProgress = continueProgress(movementProgress, deltaTime, MOVEMENT_SPEED);
-        if (isMoving()) {
-            // record that the player has reached his/her destination
-            coordinates = destinationCoordinates;
-        }
     }
 
     public float getMovementProgress() {
@@ -72,25 +49,28 @@ public class Tank {
         return direction;
     }
 
-    public void moveTank(Direction movingDirection, HashMap<Object, GridPoint2> obstacleHashMap) {
-        if (movingDirection != null & this.isMoving()) {
-            GridPoint2 tankTargetCoordinates = movingDirection.apply(this.getCoordinates());
-            if (!collides(obstacleHashMap, tankTargetCoordinates)) {
-                this.moveTo(tankTargetCoordinates);
-                obstacleHashMap.put(this, tankTargetCoordinates);
+
+    // TODO вынести в интерфейс
+    @Override
+    public void move(Direction movingDirection, Set<GridPoint2> obstacleSet, float deltaTime) {
+        if (movingDirection != null & isEqual(movementProgress, MOVEMENT_COMPLETED)) {
+            GridPoint2 tankTargetCoordinates = movingDirection.apply(coordinates);
+            if (!obstacleSet.contains(tankTargetCoordinates)) {
+                destinationCoordinates = tankTargetCoordinates;
+                movementProgress = MOVEMENT_STARTED;
+                obstacleSet.remove(coordinates);
+                obstacleSet.add(tankTargetCoordinates);
             }
             this.rotate(movingDirection);
         }
+        movementProgress = continueProgress(movementProgress, deltaTime, MOVEMENT_SPEED);
+        if (isEqual(movementProgress, MOVEMENT_COMPLETED)) { this.coordinates = this.destinationCoordinates; }
     }
 
-    private boolean collides(HashMap<Object, GridPoint2> obstacleHashMap, GridPoint2 object2) {
-        Set<Object> objectSet = obstacleHashMap.keySet();
-        for (Object object: objectSet) {
-            if (obstacleHashMap.get(object).equals(object2)) {
-                return true;
-            }
-        }
-        return false;
+    public void rotate(Direction direction) {
+        this.direction = direction;
+        this.rotateProgress = true;
     }
+
 
 }

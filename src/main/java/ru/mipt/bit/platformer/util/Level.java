@@ -1,66 +1,55 @@
 package ru.mipt.bit.platformer.util;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.maps.MapRenderer;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.GridPoint2;
-import com.badlogic.gdx.math.Interpolation;
+import ru.mipt.bit.platformer.util.Graphics.LevelGenerator.LevelPositions;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-
-import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
+import java.util.Set;
 
 public class Level {
-
-    private TiledMap level;
-    private MapRenderer levelRenderer;
-    private TileMovement tileMovement;
-    private TiledMapTileLayer groundLayer;
-    private List<Tree> treeList = new ArrayList<>();
-    private List<Tank> tankList = new ArrayList<>();
-    private HashMap<Object, GridPoint2> obstacleHashMap = new HashMap<>();
+    private List<Tree> treeList;
+    private List<Tank> tankList;
+    private Set<GridPoint2> obstacleSet;
+    private Tank playerTank;
 
 
-
-    public Level(String mapPath, Batch batch){
-        this.level = new TmxMapLoader().load(mapPath);
-        this.levelRenderer = createSingleLayerMapRenderer(level, batch);
-        this.groundLayer = getSingleLayer(level);
-        this.tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
+    public Level(){
+        this.treeList = new ArrayList<>();
+        this.tankList = new ArrayList<>();
+        this.obstacleSet = new HashSet<>();
     }
 
-    public TiledMapTileLayer getGroundLayer() {
-        return groundLayer;
+    public void init(LevelPositions levelPositions){
+        this.addTrees(levelPositions.getResults().get(Tree.class));
+        this.setPlayerTank(levelPositions.getPlayerStartCoordinates(), Direction.DOWN);
     }
 
-    public TiledMap getLevel() {
-        return level;
-    }
-    public MapRenderer getLevelRenderer() {
-        return levelRenderer;
-    }
-    public TileMovement getTileMovement() {
-        return tileMovement;
+    public void setPlayerTank(GridPoint2 startPlayerCoordinations, Direction startPlayerDirection) {
+        playerTank = this.addTank(startPlayerCoordinations, startPlayerDirection);
     }
 
-    public void createTrees(List<GridPoint2> coordinatesList){
+    public void addTrees(List<GridPoint2> coordinatesList){
         for (GridPoint2 coordinates: coordinatesList) {
             Tree tree = new Tree(coordinates);
             treeList.add(tree);
-            obstacleHashMap.put(tree, coordinates);
+            obstacleSet.add(coordinates);
         }
     }
 
-    public Tank createTank(GridPoint2 coordinates, Direction direction){
+    public Tank addTank(GridPoint2 coordinates, Direction direction){
         Tank tank = new Tank(coordinates, direction);
         tankList.add(tank);
-        obstacleHashMap.put(tank, coordinates);
+        obstacleSet.add(coordinates);
         return tank;
     }
+    public void updateState(Direction direction) {
+        float deltaTime = Gdx.graphics.getDeltaTime();
+        playerTank.move(direction, obstacleSet, deltaTime);
+    }
+
     public List<Tree> getTreeList() {
         return treeList;
     }
@@ -69,7 +58,4 @@ public class Level {
         return tankList;
     }
 
-    public HashMap<Object, GridPoint2> getObstacleHashMap() {
-        return obstacleHashMap;
-    }
 }

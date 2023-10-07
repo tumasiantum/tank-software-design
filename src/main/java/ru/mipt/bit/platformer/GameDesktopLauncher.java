@@ -1,46 +1,35 @@
 package ru.mipt.bit.platformer;
 
+import ru.mipt.bit.platformer.util.*;
+import ru.mipt.bit.platformer.util.Graphics.GraphicsController;
+
 import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.MapRenderer;
-import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.util.*;
-import ru.mipt.bit.platformer.util.Graphics.GdxTankGraphics;
-import ru.mipt.bit.platformer.util.Graphics.GraphicsController;
-import ru.mipt.bit.platformer.util.Graphics.GraphicsObject;
-
-import java.util.ArrayList;
-import java.util.List;
+import ru.mipt.bit.platformer.util.Graphics.LevelGenerator.LevelPositions;
+import ru.mipt.bit.platformer.util.Graphics.LevelGenerator.Parsers.Parser;
+import ru.mipt.bit.platformer.util.Graphics.LevelGenerator.Parsers.TxtParser;
+import ru.mipt.bit.platformer.util.Graphics.LevelGenerator.Random.RandomLevelGenerator;
 
 import static com.badlogic.gdx.Input.Keys.*;
-import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
 public class GameDesktopLauncher implements ApplicationListener {
-    private Batch batch;
     private Level level;
-    private Tank tank;
     private InputController inputController;
     private GraphicsController graphicsController;
 
+
     @Override
     public void create() {
-        batch = new SpriteBatch();
-        level = new Level("level.tmx", batch);
-
+        level = new Level();
         graphicsController = new GraphicsController(level);
 
-        tank = level.createTank(new GridPoint2(1, 3), Direction.RIGHT);
+//        Parser parser = new TxtParser(graphicsController.getLevelGraphics().getLevelWidth(), graphicsController.getLevelGraphics().getLevelHeight());
+//        LevelPositions levelPositions = parser.parse("src/main/resources/pos.txt");
+        RandomLevelGenerator randomLevelGenerator = new RandomLevelGenerator(graphicsController.getLevelGraphics().getLevelWidth(), graphicsController.getLevelGraphics().getLevelHeight());
+        LevelPositions levelPositions = randomLevelGenerator.generate(20);
 
-        List<GridPoint2> treeCoordinatesList = new ArrayList<>();
-        treeCoordinatesList.add(new GridPoint2(3,4));
-        treeCoordinatesList.add(new GridPoint2(1,2));
-
-        level.createTrees(treeCoordinatesList);
-
+        level.init(levelPositions);
         graphicsController.init();
 
         initKeyMappings();
@@ -51,10 +40,8 @@ public class GameDesktopLauncher implements ApplicationListener {
         // clear the screen
         graphicsController.clearScreen();
         // get time passed since the last render
-        float deltaTime = Gdx.graphics.getDeltaTime();
-        Direction direction = inputController.getDirection();
-        updateGameState(deltaTime, direction);
-        renderGame();
+        level.updateState(inputController.getDirection());
+        graphicsController.render();
     }
 
     @Override
@@ -76,27 +63,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     public void dispose() {
         // dispose of all the native resources (classes which implement com.badlogic.gdx.utils.Disposable)
         graphicsController.dispose();
-        level.getLevel().dispose();
-        batch.dispose();
     }
-
-    private void renderGame() {
-        // render each tile of the level
-        level.getLevelRenderer().render();
-        // start recording all drawing commands
-        batch.begin();
-        // render all objects
-        graphicsController.renderTanksGraphic();
-        graphicsController.drawAllTextureRegionUnscaled(batch);
-        // submit all drawing requests
-        batch.end();
-    }
-
-    private void updateGameState(float deltaTime, Direction movingDirection) {
-        tank.moveTank(movingDirection, level.getObstacleHashMap());
-        tank.updateState(deltaTime);
-    }
-
 
     private void initKeyMappings() {
         inputController = new InputController();
