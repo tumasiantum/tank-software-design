@@ -13,10 +13,11 @@ public class Tank {
     public static final float MOVEMENT_COMPLETED = 1f;
     public static final int MOVEMENT_STARTED = 0;
 
-    private float movementProgress;
+    public float movementProgress;
     private GridPoint2 coordinates;
     private GridPoint2 destinationCoordinates;
     private Direction direction;
+    private Boolean rotateProgress = false;
 
     public Tank(GridPoint2 coordinates, Direction direction) {
         this.movementProgress = 1;
@@ -24,9 +25,6 @@ public class Tank {
         this.destinationCoordinates = coordinates;
         this.direction = direction;
     }
-//    private boolean isThereCollision(Tree tree, String way) {
-//        return !tree.getTreeObstacleCoordinates().equals(futureWay(way));
-//    }
 
     public GridPoint2 getCoordinates() {
         return coordinates;
@@ -47,6 +45,15 @@ public class Tank {
 
     public void rotate(Direction direction) {
         this.direction = direction;
+        this.rotateProgress = true;
+    }
+
+    public Boolean getRotateProgress() {
+        return rotateProgress;
+    }
+
+    public void setRotateProgress(Boolean rotateProgress) {
+        this.rotateProgress = rotateProgress;
     }
 
     public void updateState(float deltaTime) {
@@ -65,7 +72,7 @@ public class Tank {
         return direction;
     }
 
-    public void moveTank(Direction movingDirection, Graphics tankGraphics, HashMap<Object, GridPoint2> obstacleHashMap) {
+    public void moveTank(Direction movingDirection, HashMap<Object, GridPoint2> obstacleHashMap) {
         if (movingDirection != null & this.isMoving()) {
             GridPoint2 tankTargetCoordinates = movingDirection.apply(this.getCoordinates());
             if (!collides(obstacleHashMap, tankTargetCoordinates)) {
@@ -73,7 +80,6 @@ public class Tank {
                 obstacleHashMap.put(this, tankTargetCoordinates);
             }
             this.rotate(movingDirection);
-            tankGraphics.setDirection(movingDirection);
         }
     }
 

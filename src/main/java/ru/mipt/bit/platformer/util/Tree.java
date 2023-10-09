@@ -13,4 +13,5 @@ public class Tree{
     public GridPoint2 getCoordinates() {
         return coordinates;
     }
+
 }
