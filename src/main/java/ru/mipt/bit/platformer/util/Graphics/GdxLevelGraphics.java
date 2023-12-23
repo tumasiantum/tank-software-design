@@ -22,14 +22,6 @@ public class GdxLevelGraphics {
         this.groundLayer = getSingleLayer(level);
         this.tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
     }
-
-    public int getLevelHeight() {
-        return (int) this.level.getProperties().get("height");
-    }
-
-    public int getLevelWidth() {
-        return (int) this.level.getProperties().get("width");
-    }
     public TiledMap getLevel() {
         return level;
     }

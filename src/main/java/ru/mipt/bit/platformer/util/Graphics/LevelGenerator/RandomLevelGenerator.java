@@ -1,34 +1,32 @@
-package ru.mipt.bit.platformer.util.Graphics.LevelGenerator.Random;
+package ru.mipt.bit.platformer.util.Graphics.LevelGenerator;
 
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.util.Graphics.LevelGenerator.LevelPositions;
-import ru.mipt.bit.platformer.util.Tree;
+import ru.mipt.bit.platformer.util.Level;
 
 import java.util.*;
 
-public class RandomLevelGenerator {
+public class RandomLevelGenerator implements LevelGenerator {
 
     private Random random;
     private int height;
     private int width;
+    private int numberOfTrees;
     private Set<GridPoint2> levelSet = new HashSet<>();
 
-    public RandomLevelGenerator(int width, int height){
+    public RandomLevelGenerator(int width, int height, int numberOfTrees){
         this.height = height;
         this.width = width;
+        this.numberOfTrees = numberOfTrees;
         this.random = new Random();
     }
-
-    public LevelPositions generate(int numberOfTrees) {
-        LevelPositions result = new LevelPositions();
-        result.width = this.width;
-        result.height = this.height;
+    @Override
+    public Level generate() {
+        Level resultLevel = new Level(this.width, this.height);
         GridPoint2 playerStartCoordinates = this.randomCoordinate();
         levelSet.add(playerStartCoordinates);
-        result.setPlayerStartCoordinates(playerStartCoordinates);
-
-        result.addList(Tree.class, List.copyOf(this.randomSet(numberOfTrees)));
-        return result;
+        resultLevel.setPlayerTank(playerStartCoordinates);
+        resultLevel.addTrees(List.copyOf(this.randomSet(this.numberOfTrees)));
+        return resultLevel;
     }
 
     private GridPoint2 randomCoordinate(){
@@ -49,6 +47,4 @@ public class RandomLevelGenerator {
         }
         return res;
     }
-
-
 }

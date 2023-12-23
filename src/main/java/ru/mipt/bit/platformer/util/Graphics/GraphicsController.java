@@ -10,8 +10,10 @@ import ru.mipt.bit.platformer.util.Level;
 import ru.mipt.bit.platformer.util.Tank;
 import ru.mipt.bit.platformer.util.Tree;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static ru.mipt.bit.platformer.util.Graphics.GdxGameUtils.drawTextureRegionUnscaled;
@@ -27,11 +29,13 @@ public class GraphicsController {
         this.graphicsObjectList = new ArrayList<>();
         this.level = level;
         this.batch = new SpriteBatch();
-        this.levelGraphics = new GdxLevelGraphics("level.tmx", batch);
+        this.levelGraphics = new GdxLevelGraphics(generateTmxFromTemplate(level.width, level.height).getPath(), batch);
+        init();
     }
 
 
-    public void init(){
+
+    private void init(){
         // TODO with gameObject Interface
         for (Tank tank: level.getTankList()) {
             GdxTankGraphics tankGraphics = new GdxTankGraphics(tank.getDirection(), tank);
@@ -72,7 +76,43 @@ public class GraphicsController {
         this.batch.end();
     }
 
-    public GdxLevelGraphics getLevelGraphics() {
-        return levelGraphics;
+    public File generateTmxFromTemplate(Integer width, Integer height){
+        File templateFile = new File("src/main/resources/leveltemplate.tmx");
+        File resultFile = new File("src/main/resources/levelresult.tmx");
+        try (BufferedReader reader = new BufferedReader(new FileReader(templateFile));
+             BufferedWriter writer = new BufferedWriter(new FileWriter(resultFile))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.equals("CSV")) {
+                    fillCsvField(width, height, writer);
+                } else {
+                    line = line.replaceAll("\\b" + "WIDTH" + "\\b", width.toString());
+                    line = line.replaceAll("\\b" + "HEIGHT" + "\\b", height.toString());
+                    writer.write(line);
+                }
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return resultFile;
+    }
+
+    private static void fillCsvField(Integer width, Integer height, BufferedWriter writer) throws IOException {
+        Random random = new Random();
+        for (int i = 0; i < height; i++) {
+            StringBuilder lineBuilder = new StringBuilder();
+            for (int j = 0; j < width; j++) {
+                int randomNumber = random.nextInt(2) + 1;
+                lineBuilder.append(randomNumber);
+                if (j < width - 1 || i < height - 1) {
+                    lineBuilder.append(",");
+                }
+            }
+            writer.write(lineBuilder.toString());
+            if (i < height - 1){
+                writer.write("\n");
+            }
+        }
     }
 }

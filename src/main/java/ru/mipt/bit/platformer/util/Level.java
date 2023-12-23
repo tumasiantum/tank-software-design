@@ -2,7 +2,6 @@ package ru.mipt.bit.platformer.util;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.util.Graphics.LevelGenerator.LevelPositions;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,37 +13,38 @@ public class Level {
     private List<Tank> tankList;
     private Set<GridPoint2> obstacleSet;
     private Tank playerTank;
+    public Integer width;
+    public Integer height;
 
 
-    public Level(){
+
+    public Level(Integer width, Integer height) {
         this.treeList = new ArrayList<>();
         this.tankList = new ArrayList<>();
         this.obstacleSet = new HashSet<>();
+        this.width = width;
+        this.height = height;
     }
 
-    public void init(LevelPositions levelPositions){
-        this.addTrees(levelPositions.getResults().get(Tree.class));
-        this.setPlayerTank(levelPositions.getPlayerStartCoordinates(), Direction.DOWN);
+    public void setPlayerTank(GridPoint2 startPlayerCoordinations) {
+        playerTank = this.addTank(startPlayerCoordinations, Direction.DOWN);
     }
 
-    public void setPlayerTank(GridPoint2 startPlayerCoordinations, Direction startPlayerDirection) {
-        playerTank = this.addTank(startPlayerCoordinations, startPlayerDirection);
-    }
-
-    public void addTrees(List<GridPoint2> coordinatesList){
-        for (GridPoint2 coordinates: coordinatesList) {
+    public void addTrees(List<GridPoint2> coordinatesList) {
+        for (GridPoint2 coordinates : coordinatesList) {
             Tree tree = new Tree(coordinates);
             treeList.add(tree);
             obstacleSet.add(coordinates);
         }
     }
 
-    public Tank addTank(GridPoint2 coordinates, Direction direction){
+    private Tank addTank(GridPoint2 coordinates, Direction direction) {
         Tank tank = new Tank(coordinates, direction);
         tankList.add(tank);
         obstacleSet.add(coordinates);
         return tank;
     }
+
     public void updateState(Direction direction) {
         float deltaTime = Gdx.graphics.getDeltaTime();
         playerTank.move(direction, obstacleSet, deltaTime);

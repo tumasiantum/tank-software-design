@@ -6,10 +6,9 @@ import ru.mipt.bit.platformer.util.Graphics.GraphicsController;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import ru.mipt.bit.platformer.util.Graphics.LevelGenerator.LevelPositions;
-import ru.mipt.bit.platformer.util.Graphics.LevelGenerator.Parsers.Parser;
-import ru.mipt.bit.platformer.util.Graphics.LevelGenerator.Parsers.TxtParser;
-import ru.mipt.bit.platformer.util.Graphics.LevelGenerator.Random.RandomLevelGenerator;
+import ru.mipt.bit.platformer.util.Graphics.LevelGenerator.LevelGenerator;
+import ru.mipt.bit.platformer.util.Graphics.LevelGenerator.RandomLevelGenerator;
+import ru.mipt.bit.platformer.util.Graphics.LevelGenerator.TxtLevelGenerator;
 
 import static com.badlogic.gdx.Input.Keys.*;
 
@@ -21,17 +20,10 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     @Override
     public void create() {
-        level = new Level();
+//        LevelGenerator generator = new TxtLevelGenerator("src/main/resources/pos.txt");
+        LevelGenerator generator = new RandomLevelGenerator(10 ,6 ,25);
+        level = generator.generate();
         graphicsController = new GraphicsController(level);
-
-//        Parser parser = new TxtParser(graphicsController.getLevelGraphics().getLevelWidth(), graphicsController.getLevelGraphics().getLevelHeight());
-//        LevelPositions levelPositions = parser.parse("src/main/resources/pos.txt");
-        RandomLevelGenerator randomLevelGenerator = new RandomLevelGenerator(graphicsController.getLevelGraphics().getLevelWidth(), graphicsController.getLevelGraphics().getLevelHeight());
-        LevelPositions levelPositions = randomLevelGenerator.generate(20);
-
-        level.init(levelPositions);
-        graphicsController.init();
-
         initKeyMappings();
     }
 
@@ -79,7 +71,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     public static void main(String[] args) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         // level width: 10 tiles x 128px, height: 8 tiles x 128px
-        config.setWindowedMode(1280, 1024);
+        config.setWindowedMode(1280, 768);
         new Lwjgl3Application(new GameDesktopLauncher(), config);
     }
 }
