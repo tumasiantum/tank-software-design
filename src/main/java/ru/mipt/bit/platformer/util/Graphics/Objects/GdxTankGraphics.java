@@ -3,9 +3,9 @@ package ru.mipt.bit.platformer.util.Graphics.Objects;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
-import ru.mipt.bit.platformer.util.Direction;
+import ru.mipt.bit.platformer.util.GameObjects.Managers.Direction;
 import ru.mipt.bit.platformer.util.Graphics.GdxLevelGraphics;
-import ru.mipt.bit.platformer.util.Tank;
+import ru.mipt.bit.platformer.util.GameObjects.Tank;
 
 import static ru.mipt.bit.platformer.util.Graphics.GdxGameUtils.createBoundingRectangle;
 

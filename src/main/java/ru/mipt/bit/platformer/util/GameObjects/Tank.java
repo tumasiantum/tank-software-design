@@ -1,13 +1,13 @@
-package ru.mipt.bit.platformer.util;
+package ru.mipt.bit.platformer.util.GameObjects;
 
 import com.badlogic.gdx.math.GridPoint2;
-
-import java.util.Set;
+import ru.mipt.bit.platformer.util.GameObjects.Managers.CollisionManager;
+import ru.mipt.bit.platformer.util.GameObjects.Managers.Direction;
 
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.Graphics.GdxGameUtils.*;
 
-public class Tank implements GameObject{
+public class Tank implements GameObject {
     private static final float MOVEMENT_SPEED = 0.4f;
     public static final float MOVEMENT_COMPLETED = 1f;
     public static final int MOVEMENT_STARTED = 0;
@@ -25,6 +25,7 @@ public class Tank implements GameObject{
         this.direction = direction;
     }
 
+    @Override
     public GridPoint2 getCoordinates() {
         return coordinates;
     }
@@ -50,21 +51,24 @@ public class Tank implements GameObject{
     }
 
 
-    // TODO вынести в интерфейс
+
     @Override
-    public void move(Direction movingDirection, Set<GridPoint2> obstacleSet, float deltaTime) {
+    public void move(Direction movingDirection, CollisionManager collisionManager, float deltaTime) {
         if (movingDirection != null & isEqual(movementProgress, MOVEMENT_COMPLETED)) {
             GridPoint2 tankTargetCoordinates = movingDirection.apply(coordinates);
-            if (!obstacleSet.contains(tankTargetCoordinates)) {
+            if (collisionManager.isFree(tankTargetCoordinates)) {
                 destinationCoordinates = tankTargetCoordinates;
                 movementProgress = MOVEMENT_STARTED;
-                obstacleSet.remove(coordinates);
-                obstacleSet.add(tankTargetCoordinates);
             }
             this.rotate(movingDirection);
         }
         movementProgress = continueProgress(movementProgress, deltaTime, MOVEMENT_SPEED);
-        if (isEqual(movementProgress, MOVEMENT_COMPLETED)) { this.coordinates = this.destinationCoordinates; }
+        if (isEqual(movementProgress, MOVEMENT_COMPLETED)) {
+            if (this.coordinates != this.destinationCoordinates){
+                collisionManager.endMovement(coordinates);
+            }
+            this.coordinates = this.destinationCoordinates;
+        }
     }
 
     public void rotate(Direction direction) {

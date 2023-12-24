@@ -3,12 +3,13 @@ package ru.mipt.bit.platformer.util.Graphics;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import ru.mipt.bit.platformer.util.GameObjects.GameObject;
 import ru.mipt.bit.platformer.util.Graphics.Objects.GdxTankGraphics;
 import ru.mipt.bit.platformer.util.Graphics.Objects.GdxTreeGraphics;
 import ru.mipt.bit.platformer.util.Graphics.Objects.GraphicsObject;
-import ru.mipt.bit.platformer.util.Level;
-import ru.mipt.bit.platformer.util.Tank;
-import ru.mipt.bit.platformer.util.Tree;
+import ru.mipt.bit.platformer.util.GameObjects.Level;
+import ru.mipt.bit.platformer.util.GameObjects.Tank;
+import ru.mipt.bit.platformer.util.GameObjects.Tree;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -36,16 +37,15 @@ public class GraphicsController {
 
 
     private void init(){
-        // TODO with gameObject Interface
-        for (Tank tank: level.getTankList()) {
-            GdxTankGraphics tankGraphics = new GdxTankGraphics(tank.getDirection(), tank);
-            this.graphicsObjectList.add(tankGraphics);
-        }
-
-        for (Tree tree: level.getTreeList()) {
-            GdxTreeGraphics treeGraphics = new GdxTreeGraphics();
-            this.graphicsObjectList.add(treeGraphics);
-            moveRectangleAtTileCenter(levelGraphics.getGroundLayer(), treeGraphics.getRectangle(), tree.getCoordinates());
+        for (GameObject gameObject: level.getGameObjectList()) {
+            if (gameObject instanceof Tree) {
+                GdxTreeGraphics treeGraphics = new GdxTreeGraphics();
+                this.graphicsObjectList.add(treeGraphics);
+                moveRectangleAtTileCenter(levelGraphics.getGroundLayer(), treeGraphics.getRectangle(), gameObject.getCoordinates());
+            } else if (gameObject instanceof Tank) {
+                GdxTankGraphics tankGraphics = new GdxTankGraphics(gameObject.getDirection(), (Tank) gameObject);
+                this.graphicsObjectList.add(tankGraphics);
+            }
         }
     }
 

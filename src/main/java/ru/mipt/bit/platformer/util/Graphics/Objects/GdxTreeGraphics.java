@@ -3,7 +3,7 @@ package ru.mipt.bit.platformer.util.Graphics.Objects;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
-import ru.mipt.bit.platformer.util.Direction;
+import ru.mipt.bit.platformer.util.GameObjects.Managers.Direction;
 import ru.mipt.bit.platformer.util.Graphics.GdxLevelGraphics;
 
 import static ru.mipt.bit.platformer.util.Graphics.GdxGameUtils.createBoundingRectangle;
@@ -30,6 +30,11 @@ public class GdxTreeGraphics implements GraphicsObject {
     }
 
     @Override
+    public Direction getDirection() {
+        return Direction.UP;
+    }
+
+    @Override
     public Rectangle getRectangle() {
         return this.rectangle;
     }
@@ -38,9 +43,5 @@ public class GdxTreeGraphics implements GraphicsObject {
     @Override
     public void renderGraphic(GdxLevelGraphics levelGraphics) {}
 
-    @Override
-    public Direction getDirection() {
-        return Direction.UP;
-    }
 
 }

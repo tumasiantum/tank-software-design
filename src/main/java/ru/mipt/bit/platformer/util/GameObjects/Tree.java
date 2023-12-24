@@ -1,10 +1,9 @@
-package ru.mipt.bit.platformer.util;
+package ru.mipt.bit.platformer.util.GameObjects;
 
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.util.GameObjects.GameObject;
 
-import java.util.Set;
-
-public class Tree implements GameObject{
+public class Tree implements GameObject {
 
     private final GridPoint2 coordinates;
 
@@ -12,12 +11,9 @@ public class Tree implements GameObject{
         this.coordinates = coordinates;
     }
 
+    @Override
     public GridPoint2 getCoordinates() {
         return coordinates;
     }
 
-    @Override
-    public void move(Direction movingDirection, Set<GridPoint2> obstacleSet, float deltaTime) {
-
-    }
 }

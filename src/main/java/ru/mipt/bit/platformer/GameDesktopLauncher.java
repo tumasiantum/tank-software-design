@@ -1,16 +1,14 @@
 package ru.mipt.bit.platformer;
 
-import ru.mipt.bit.platformer.util.*;
+import ru.mipt.bit.platformer.util.GameObjects.Level;
+import ru.mipt.bit.platformer.util.GameObjects.Managers.InputController;
 import ru.mipt.bit.platformer.util.Graphics.GraphicsController;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import ru.mipt.bit.platformer.util.Graphics.LevelGenerator.LevelGenerator;
-import ru.mipt.bit.platformer.util.Graphics.LevelGenerator.RandomLevelGenerator;
-import ru.mipt.bit.platformer.util.Graphics.LevelGenerator.TxtLevelGenerator;
-
-import static com.badlogic.gdx.Input.Keys.*;
+import ru.mipt.bit.platformer.util.LevelGenerator.LevelGenerator;
+import ru.mipt.bit.platformer.util.LevelGenerator.TxtLevelGenerator;
 
 public class GameDesktopLauncher implements ApplicationListener {
     private Level level;
@@ -20,11 +18,10 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     @Override
     public void create() {
-//        LevelGenerator generator = new TxtLevelGenerator("src/main/resources/pos.txt");
-        LevelGenerator generator = new RandomLevelGenerator(10 ,6 ,25);
+        LevelGenerator generator = new TxtLevelGenerator("src/main/resources/pos.txt");
+//        LevelGenerator generator = new RandomLevelGenerator(5 ,5 ,7, 3);
         level = generator.generate();
         graphicsController = new GraphicsController(level);
-        initKeyMappings();
     }
 
     @Override
@@ -32,7 +29,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         // clear the screen
         graphicsController.clearScreen();
         // get time passed since the last render
-        level.updateState(inputController.getDirection());
+        level.updateState();
         graphicsController.render();
     }
 
@@ -57,17 +54,6 @@ public class GameDesktopLauncher implements ApplicationListener {
         graphicsController.dispose();
     }
 
-    private void initKeyMappings() {
-        inputController = new InputController();
-        inputController.addMapping(UP, Direction.UP);
-        inputController.addMapping(W, Direction.UP);
-        inputController.addMapping(LEFT, Direction.LEFT);
-        inputController.addMapping(A, Direction.LEFT);
-        inputController.addMapping(DOWN, Direction.DOWN);
-        inputController.addMapping(S, Direction.DOWN);
-        inputController.addMapping(RIGHT, Direction.RIGHT);
-        inputController.addMapping(D, Direction.RIGHT);
-    }
     public static void main(String[] args) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         // level width: 10 tiles x 128px, height: 8 tiles x 128px

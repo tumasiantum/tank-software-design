@@ -1,7 +1,6 @@
-package ru.mipt.bit.platformer;
+package ru.mipt.bit.platformer.util.GameObjects.Managers;
 
 import com.badlogic.gdx.Gdx;
-import ru.mipt.bit.platformer.util.Direction;
 
 import java.util.HashMap;
 import java.util.Map;
