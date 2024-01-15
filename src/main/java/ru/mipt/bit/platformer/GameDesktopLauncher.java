@@ -9,6 +9,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import ru.mipt.bit.platformer.util.LevelGenerator.LevelGenerator;
 import ru.mipt.bit.platformer.util.LevelGenerator.TxtLevelGenerator;
+import ru.mipt.bit.platformer.util.Listeners.Event;
 
 public class GameDesktopLauncher implements ApplicationListener {
     private Level level;
@@ -22,6 +23,9 @@ public class GameDesktopLauncher implements ApplicationListener {
 //        LevelGenerator generator = new RandomLevelGenerator(5 ,5 ,7, 3);
         level = generator.generate();
         graphicsController = new GraphicsController(level);
+
+        level.events.subscribe(Event.ADD_GAME_OBJECT, graphicsController);
+        level.events.subscribe(Event.REMOVE_GAME_OBJECT, graphicsController);
     }
 
     @Override

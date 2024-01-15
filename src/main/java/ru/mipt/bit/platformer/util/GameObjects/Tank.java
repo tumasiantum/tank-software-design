@@ -1,13 +1,13 @@
 package ru.mipt.bit.platformer.util.GameObjects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.util.GameObjects.Managers.CollisionManager;
 import ru.mipt.bit.platformer.util.GameObjects.Managers.Direction;
-
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.Graphics.GdxGameUtils.*;
 
-public class Tank implements GameObject {
+public class Tank implements GameObject, MovableObject {
     private static final float MOVEMENT_SPEED = 0.4f;
     public static final float MOVEMENT_COMPLETED = 1f;
     public static final int MOVEMENT_STARTED = 0;
@@ -17,12 +17,14 @@ public class Tank implements GameObject {
     private GridPoint2 destinationCoordinates;
     private Direction direction;
     private Boolean rotateProgress = false;
+    private Long lastCallTime;
 
     public Tank(GridPoint2 coordinates, Direction direction) {
-        this.movementProgress = 1;
+        this.movementProgress = MOVEMENT_COMPLETED;
         this.coordinates = coordinates;
         this.destinationCoordinates = coordinates;
         this.direction = direction;
+        lastCallTime = System.currentTimeMillis();
     }
 
     @Override
@@ -53,15 +55,8 @@ public class Tank implements GameObject {
 
 
     @Override
-    public void move(Direction movingDirection, CollisionManager collisionManager, float deltaTime) {
-        if (movingDirection != null & isEqual(movementProgress, MOVEMENT_COMPLETED)) {
-            GridPoint2 tankTargetCoordinates = movingDirection.apply(coordinates);
-            if (collisionManager.isFree(tankTargetCoordinates)) {
-                destinationCoordinates = tankTargetCoordinates;
-                movementProgress = MOVEMENT_STARTED;
-            }
-            this.rotate(movingDirection);
-        }
+    public void move(CollisionManager collisionManager) {
+        float deltaTime = Gdx.graphics.getDeltaTime();
         movementProgress = continueProgress(movementProgress, deltaTime, MOVEMENT_SPEED);
         if (isEqual(movementProgress, MOVEMENT_COMPLETED)) {
             if (this.coordinates != this.destinationCoordinates){
@@ -71,10 +66,32 @@ public class Tank implements GameObject {
         }
     }
 
+    @Override
+    public void startMovement(Direction movingDirection, CollisionManager collisionManager){
+        if (isEqual(movementProgress, MOVEMENT_COMPLETED)) {
+            GridPoint2 tankTargetCoordinates = movingDirection.apply(coordinates);
+            if (collisionManager.isFree(tankTargetCoordinates)) {
+                destinationCoordinates = tankTargetCoordinates;
+                movementProgress = MOVEMENT_STARTED;
+            }
+            this.rotate(movingDirection);
+        }
+    }
+
     public void rotate(Direction direction) {
         this.direction = direction;
         this.rotateProgress = true;
     }
 
 
+    public void shoot() {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastCallTime >= 700) {
+            Bullet bullet = new Bullet(direction.apply(coordinates), direction);
+            Level.getInstance().addObject(bullet);
+            lastCallTime = currentTime;
+        }
+
+    }
 }
+

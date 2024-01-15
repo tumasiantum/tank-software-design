@@ -1,28 +1,29 @@
 package ru.mipt.bit.platformer.util.GameObjects;
 
-import com.badlogic.gdx.Gdx;
 import ru.mipt.bit.platformer.util.GameObjects.Managers.CollisionManager;
 import ru.mipt.bit.platformer.util.GameObjects.Managers.Direction;
 import ru.mipt.bit.platformer.util.GameObjects.Managers.InputController;
-import ru.mipt.bit.platformer.util.GameObjects.Mover.Mover;
-import ru.mipt.bit.platformer.util.GameObjects.Mover.Movements.PlayerMovement;
-import ru.mipt.bit.platformer.util.GameObjects.Mover.Movements.SelfMovement;
+import ru.mipt.bit.platformer.util.GameObjects.Managers.RandomController;
+import ru.mipt.bit.platformer.util.GameObjects.Mover.Command;
+import ru.mipt.bit.platformer.util.GameObjects.Mover.Commands.*;
+import ru.mipt.bit.platformer.util.Listeners.Event;
+import ru.mipt.bit.platformer.util.Listeners.EventListener;
+import ru.mipt.bit.platformer.util.Listeners.EventManager;
 
 import java.util.*;
 
-import static com.badlogic.gdx.Input.Keys.*;
-import static com.badlogic.gdx.Input.Keys.D;
-
 public class Level {
+    private static Level level;
     private List<GameObject> gameObjectList;
     private Tank playerTank;
     public Integer width;
     public Integer height;
     private CollisionManager collisionManager;
-
-
+    private final List<Command> commandList = new ArrayList<>();
     private InputController inputController;
-    private Mover mover;
+    private RandomController randomController;
+    public EventManager events;
+
 
     public Level(Integer width, Integer height, List<GameObject> gameObjectList, Tank playerTank) {
         this.gameObjectList = gameObjectList;
@@ -31,33 +32,70 @@ public class Level {
         this.playerTank = playerTank;
         this.collisionManager = new CollisionManager(this);
         this.inputController = new InputController();
-        inputController.addMapping(UP, Direction.UP);
-        inputController.addMapping(W, Direction.UP);
-        inputController.addMapping(LEFT, Direction.LEFT);
-        inputController.addMapping(A, Direction.LEFT);
-        inputController.addMapping(DOWN, Direction.DOWN);
-        inputController.addMapping(S, Direction.DOWN);
-        inputController.addMapping(RIGHT, Direction.RIGHT);
-        inputController.addMapping(D, Direction.RIGHT);
-        this.mover = new Mover();
+        this.randomController = new RandomController();
+        this.events = new EventManager(Event.ADD_GAME_OBJECT, Event.REMOVE_GAME_OBJECT);
+        level = this;
+    }
+
+    public static Level getInstance() {
+        return level;
+    }
+
+    public void addObject(GameObject gameObject){
+        gameObjectList.add(gameObject);
+        events.notify(Event.ADD_GAME_OBJECT, gameObject);
+    }
+
+    public void removeObject(GameObject gameObject){
+        gameObjectList.remove(gameObject);
+        events.notify(Event.REMOVE_GAME_OBJECT, gameObject);
+        System.out.printf("объект удален");
+    }
+
+    public ArrayList<Bullet> getBulletsArray(){
+        ArrayList<Bullet> levelBullets = new ArrayList<>();
         for (GameObject gameObject: gameObjectList) {
-            if (gameObject instanceof Tank){
-                if (gameObject == playerTank){
-                    mover.register((Tank) gameObject, new PlayerMovement(collisionManager, inputController, (Tank) gameObject));
-                }
-                else {
-                    mover.register((Tank) gameObject, new SelfMovement(collisionManager, (Tank) gameObject));
-                }
+            if (gameObject instanceof Bullet){
+                levelBullets.add((Bullet) gameObject);
             }
         }
+        return levelBullets;
     }
 
     public void updateState() {
-        float deltaTime = Gdx.graphics.getDeltaTime();
+        Direction playerDirection = inputController.getDirection();
+        Boolean playerShoot = inputController.getShoot();
         for (GameObject gameObject: gameObjectList) {
-            if (gameObject instanceof Tank ){
-                this.mover.execute((Tank) gameObject, deltaTime);
+            if (gameObject instanceof Tank){
+                if (gameObject != playerTank){
+                    Direction botDirection = randomController.getDirection();
+                    Boolean botShoot = randomController.getShoot();
+                    produceCommands(botDirection, botShoot, (Tank) gameObject);
+                }
+                else {
+                    produceCommands(playerDirection, playerShoot, (Tank) gameObject);
+                }
             }
+        }
+
+        for (Command command: commandList) {
+            command.execute();
+        }
+        for (GameObject gameObject: gameObjectList) {
+            if (gameObject instanceof MovableObject){
+                ((MovableObject) gameObject).move(collisionManager);
+            }
+        }
+        commandList.clear();
+        collisionManager.updateState();
+    }
+
+    private void produceCommands(Direction direction, Boolean shoot, Tank tank) {
+        if (direction != null){
+            commandList.add(new MovementCommand(collisionManager, direction, tank));
+        }
+        if (shoot) {
+            commandList.add(new ShootCommand(tank));
         }
     }
 

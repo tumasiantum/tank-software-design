@@ -3,16 +3,18 @@ package ru.mipt.bit.platformer.util.Graphics;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import ru.mipt.bit.platformer.util.GameObjects.GameObject;
+import ru.mipt.bit.platformer.util.GameObjects.*;
+import ru.mipt.bit.platformer.util.Graphics.Objects.GdxBulletGraphics;
 import ru.mipt.bit.platformer.util.Graphics.Objects.GdxTankGraphics;
 import ru.mipt.bit.platformer.util.Graphics.Objects.GdxTreeGraphics;
 import ru.mipt.bit.platformer.util.Graphics.Objects.GraphicsObject;
-import ru.mipt.bit.platformer.util.GameObjects.Level;
-import ru.mipt.bit.platformer.util.GameObjects.Tank;
-import ru.mipt.bit.platformer.util.GameObjects.Tree;
+import ru.mipt.bit.platformer.util.Listeners.Event;
+import ru.mipt.bit.platformer.util.Listeners.EventListener;
 
 import java.io.*;
+import java.net.http.WebSocket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -20,37 +22,49 @@ import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static ru.mipt.bit.platformer.util.Graphics.GdxGameUtils.drawTextureRegionUnscaled;
 import static ru.mipt.bit.platformer.util.Graphics.GdxGameUtils.moveRectangleAtTileCenter;
 
-public class GraphicsController {
-    private List<GraphicsObject> graphicsObjectList;
+public class GraphicsController implements EventListener {
+    private HashMap<GameObject, GraphicsObject> objectHashMap = new HashMap<>();
     private Level level;
     private GdxLevelGraphics levelGraphics;
     private Batch batch;
 
     public GraphicsController(Level level) {
-        this.graphicsObjectList = new ArrayList<>();
         this.level = level;
         this.batch = new SpriteBatch();
         this.levelGraphics = new GdxLevelGraphics(generateTmxFromTemplate(level.width, level.height).getPath(), batch);
         init();
     }
 
+    @Override
+    public void update(Event eventType, GameObject gameObject) {
+        if (eventType == Event.ADD_GAME_OBJECT){
+            if (gameObject instanceof Bullet){
+                GdxBulletGraphics bulletGraphics = new GdxBulletGraphics(gameObject.getDirection(), (Bullet) gameObject);
+                objectHashMap.put(gameObject, bulletGraphics);
+            }
+        }
+        if (eventType == Event.REMOVE_GAME_OBJECT){
+            var deletingObject = objectHashMap.remove(gameObject);
+            deletingObject.dispose();
+        }
+    }
 
 
     private void init(){
         for (GameObject gameObject: level.getGameObjectList()) {
             if (gameObject instanceof Tree) {
                 GdxTreeGraphics treeGraphics = new GdxTreeGraphics();
-                this.graphicsObjectList.add(treeGraphics);
                 moveRectangleAtTileCenter(levelGraphics.getGroundLayer(), treeGraphics.getRectangle(), gameObject.getCoordinates());
+                objectHashMap.put(gameObject, treeGraphics);
             } else if (gameObject instanceof Tank) {
                 GdxTankGraphics tankGraphics = new GdxTankGraphics(gameObject.getDirection(), (Tank) gameObject);
-                this.graphicsObjectList.add(tankGraphics);
+                objectHashMap.put(gameObject, tankGraphics);
             }
         }
     }
 
     public void dispose(){
-        for (GraphicsObject graphicsObject : graphicsObjectList) {
+        for (GraphicsObject graphicsObject : objectHashMap.values()) {
             graphicsObject.getTexture().dispose();
         }
         this.levelGraphics.getLevel().dispose();
@@ -68,7 +82,7 @@ public class GraphicsController {
         // start recording all drawing commands
         this.batch.begin();
         // render all objects
-        for (GraphicsObject graphicsObject: graphicsObjectList) {
+        for (GraphicsObject graphicsObject: objectHashMap.values()) {
             graphicsObject.renderGraphic(levelGraphics);
             drawTextureRegionUnscaled(this.batch, graphicsObject.getTextureRegion(), graphicsObject.getRectangle(), graphicsObject.getDirection().getRotation());
         }

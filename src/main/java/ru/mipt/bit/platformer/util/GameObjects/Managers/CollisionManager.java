@@ -1,6 +1,7 @@
 package ru.mipt.bit.platformer.util.GameObjects.Managers;
 
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.util.GameObjects.Bullet;
 import ru.mipt.bit.platformer.util.GameObjects.Level;
 
 import java.util.HashSet;
@@ -8,6 +9,8 @@ import java.util.Set;
 
 public class CollisionManager {
     private Set<GridPoint2> obstacleSet = new HashSet<>();
+    private Set<GridPoint2> bulletPositions = new HashSet<>();
+
 
     private Level level;
 
@@ -38,5 +41,14 @@ public class CollisionManager {
 
     public void endMovement(GridPoint2 removableCoordinates){
         obstacleSet.remove(removableCoordinates);
+    }
+
+    public void updateState(){
+        for (Bullet bullet: level.getBulletsArray()){
+            if (obstacleSet.contains(bullet.getCoordinates())){
+
+                level.removeObject(bullet);
+            }
+        }
     }
 }

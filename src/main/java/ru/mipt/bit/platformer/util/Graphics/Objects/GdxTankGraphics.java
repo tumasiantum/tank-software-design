@@ -54,4 +54,9 @@ public class GdxTankGraphics implements GraphicsObject {
     public Rectangle getRectangle() {
         return this.rectangle;
     }
+
+    @Override
+    public void dispose() {
+        texture.dispose();
+    }
 }
