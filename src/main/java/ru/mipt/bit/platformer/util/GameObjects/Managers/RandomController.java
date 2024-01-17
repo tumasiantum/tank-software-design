@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class RandomController implements ActionController {
     public RandomController() {}
-    private Random random = new Random();
+    private final Random random = new Random();
 
 
     @Override

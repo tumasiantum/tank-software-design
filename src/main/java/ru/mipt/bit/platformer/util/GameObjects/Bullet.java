@@ -13,11 +13,12 @@ public class Bullet implements GameObject, MovableObject {
     public static final float MOVEMENT_COMPLETED = 1f;
     public static final int MOVEMENT_STARTED = 0;
 
+    public Float DAMAGE = 1f;
+
     public float movementProgress;
     private GridPoint2 coordinates;
     private GridPoint2 destinationCoordinates;
     private Direction direction;
-    private Boolean rotateProgress = false;
 
     public Bullet(GridPoint2 coordinates, Direction direction) {
         this.movementProgress = MOVEMENT_STARTED;
@@ -58,8 +59,14 @@ public class Bullet implements GameObject, MovableObject {
         }
     }
 
+    public Float getDamage() {
+        return DAMAGE;
+    }
+
     @Override
-    public void startMovement(Direction movingDirection, CollisionManager collisionManager){}
+    public void startMovement(Direction movingDirection, CollisionManager collisionManager){
+        return;
+    }
 
 }
 

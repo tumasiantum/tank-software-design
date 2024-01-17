@@ -25,6 +25,11 @@ public class TxtLevelGenerator implements LevelGenerator {
 
     public TxtLevelGenerator(String filePath) {
         this.filePath = filePath;
+        try {
+            processingLine(new Scanner(Paths.get(filePath)));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void processingLine(Scanner sc) throws IOException {
@@ -58,18 +63,23 @@ public class TxtLevelGenerator implements LevelGenerator {
 
     @Override
     public Level generate() {
-        try {
-            processingLine(new Scanner(Paths.get(filePath)));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
+//        try {
+////            processingLine(new Scanner(Paths.get(filePath)));
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
         Tank playerTank = new Tank(playerPosition, Direction.UP);
         gameObjectList.add(playerTank);
+        return new Level(this.width, this.height, playerTank);
+    }
+
+    @Override
+    public void fillLevel(Level level) {
         generateGameObjects(Tree.class, treePositions);
         generateGameObjects(Tank.class, tankPositions);
-        Level resultLevel = new Level(this.width, this.height, gameObjectList, playerTank);
-        return resultLevel;
+        for (GameObject gameObject: gameObjectList){
+            level.addObject(gameObject);
+        }
     }
 
     private void generateGameObjects(Class gameObjectType, List<GridPoint2> coordinatesList){
@@ -84,5 +94,15 @@ public class TxtLevelGenerator implements LevelGenerator {
                 gameObjectList.add(tree);
             }
         }
+    }
+
+    @Override
+    public int getHeight() {
+        return height;
+    }
+
+    @Override
+    public int getWidth() {
+        return width;
     }
 }

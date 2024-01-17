@@ -4,6 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import ru.mipt.bit.platformer.util.GameObjects.*;
+import ru.mipt.bit.platformer.util.Graphics.Factory.BulletGraphicsFactory;
+import ru.mipt.bit.platformer.util.Graphics.Factory.GraphicsFactory;
+import ru.mipt.bit.platformer.util.Graphics.Factory.TankGraphicsFactory;
+import ru.mipt.bit.platformer.util.Graphics.Factory.TreeGraphicsFactory;
 import ru.mipt.bit.platformer.util.Graphics.Objects.GdxBulletGraphics;
 import ru.mipt.bit.platformer.util.Graphics.Objects.GdxTankGraphics;
 import ru.mipt.bit.platformer.util.Graphics.Objects.GdxTreeGraphics;
@@ -24,44 +28,35 @@ import static ru.mipt.bit.platformer.util.Graphics.GdxGameUtils.moveRectangleAtT
 
 public class GraphicsController implements EventListener {
     private HashMap<GameObject, GraphicsObject> objectHashMap = new HashMap<>();
-    private Level level;
     private GdxLevelGraphics levelGraphics;
     private Batch batch;
 
-    public GraphicsController(Level level) {
-        this.level = level;
+    public GraphicsController(int width, int height) {
         this.batch = new SpriteBatch();
-        this.levelGraphics = new GdxLevelGraphics(generateTmxFromTemplate(level.width, level.height).getPath(), batch);
-        init();
+        this.levelGraphics = new GdxLevelGraphics(generateTmxFromTemplate(width, height).getPath(), batch);
     }
 
     @Override
     public void update(Event eventType, GameObject gameObject) {
         if (eventType == Event.ADD_GAME_OBJECT){
-            if (gameObject instanceof Bullet){
-                GdxBulletGraphics bulletGraphics = new GdxBulletGraphics(gameObject.getDirection(), (Bullet) gameObject);
-                objectHashMap.put(gameObject, bulletGraphics);
-            }
+            objectHashMap.put(gameObject, getGraphicsFactory(gameObject).createGraphics(gameObject));
         }
         if (eventType == Event.REMOVE_GAME_OBJECT){
-            var deletingObject = objectHashMap.remove(gameObject);
-            deletingObject.dispose();
+            objectHashMap.remove(gameObject).dispose();
         }
     }
 
-
-    private void init(){
-        for (GameObject gameObject: level.getGameObjectList()) {
-            if (gameObject instanceof Tree) {
-                GdxTreeGraphics treeGraphics = new GdxTreeGraphics();
-                moveRectangleAtTileCenter(levelGraphics.getGroundLayer(), treeGraphics.getRectangle(), gameObject.getCoordinates());
-                objectHashMap.put(gameObject, treeGraphics);
-            } else if (gameObject instanceof Tank) {
-                GdxTankGraphics tankGraphics = new GdxTankGraphics(gameObject.getDirection(), (Tank) gameObject);
-                objectHashMap.put(gameObject, tankGraphics);
-            }
+    private GraphicsFactory getGraphicsFactory(GameObject gameObject) {
+        if (gameObject instanceof Bullet) {
+            return new BulletGraphicsFactory();
+        } else if (gameObject instanceof Tree) {
+            return new TreeGraphicsFactory();
+        } else if (gameObject instanceof Tank) {
+            return new TankGraphicsFactory();
         }
+        throw new RuntimeException("Не создан объект графики");
     }
+
 
     public void dispose(){
         for (GraphicsObject graphicsObject : objectHashMap.values()) {

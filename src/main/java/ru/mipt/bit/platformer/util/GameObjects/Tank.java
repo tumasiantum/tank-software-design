@@ -7,7 +7,7 @@ import ru.mipt.bit.platformer.util.GameObjects.Managers.Direction;
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.Graphics.GdxGameUtils.*;
 
-public class Tank implements GameObject, MovableObject {
+public class Tank implements GameObject, MovableObject, LiveableObject {
     private static final float MOVEMENT_SPEED = 0.4f;
     public static final float MOVEMENT_COMPLETED = 1f;
     public static final int MOVEMENT_STARTED = 0;
@@ -18,6 +18,7 @@ public class Tank implements GameObject, MovableObject {
     private Direction direction;
     private Boolean rotateProgress = false;
     private Long lastCallTime;
+    private Float lives = 2f;
 
     public Tank(GridPoint2 coordinates, Direction direction) {
         this.movementProgress = MOVEMENT_COMPLETED;
@@ -59,7 +60,7 @@ public class Tank implements GameObject, MovableObject {
         float deltaTime = Gdx.graphics.getDeltaTime();
         movementProgress = continueProgress(movementProgress, deltaTime, MOVEMENT_SPEED);
         if (isEqual(movementProgress, MOVEMENT_COMPLETED)) {
-            if (this.coordinates != this.destinationCoordinates){
+            if (this.coordinates != this.destinationCoordinates) {
                 collisionManager.endMovement(coordinates);
             }
             this.coordinates = this.destinationCoordinates;
@@ -86,12 +87,22 @@ public class Tank implements GameObject, MovableObject {
 
     public void shoot() {
         long currentTime = System.currentTimeMillis();
-        if (currentTime - lastCallTime >= 700) {
+        if (currentTime - lastCallTime >= 200) {
             Bullet bullet = new Bullet(direction.apply(coordinates), direction);
             Level.getInstance().addObject(bullet);
             lastCallTime = currentTime;
         }
 
+    }
+
+    @Override
+    public void damage(Float damage) {
+        this.lives = lives - damage;
+    }
+
+    @Override
+    public Boolean isAlive() {
+        return (this.lives > 0);
     }
 }
 

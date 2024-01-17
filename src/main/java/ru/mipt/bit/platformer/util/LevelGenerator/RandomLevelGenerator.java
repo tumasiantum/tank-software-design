@@ -31,10 +31,16 @@ public class RandomLevelGenerator implements LevelGenerator {
     public Level generate() {
         Tank playerTank = new Tank(randomCoordinate(), Direction.UP);
         gameObjectList.add(playerTank);
+        return new Level(this.width, this.height, playerTank);
+    }
+
+    @Override
+    public void fillLevel(Level resultLevel) {
         generateGameObjects(Tree.class, numberOfTrees);
         generateGameObjects(Tank.class, numberOfTanks);
-        Level resultLevel = new Level(this.width, this.height, gameObjectList, playerTank);
-        return resultLevel;
+        for (GameObject gameObject: gameObjectList){
+            resultLevel.addObject(gameObject);
+        }
     }
 
     private GridPoint2 randomCoordinate(){
@@ -72,5 +78,15 @@ public class RandomLevelGenerator implements LevelGenerator {
                 gameObjectList.add(tree);
             }
         }
+    }
+
+    @Override
+    public int getHeight() {
+        return height;
+    }
+
+    @Override
+    public int getWidth() {
+        return width;
     }
 }

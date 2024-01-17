@@ -13,7 +13,6 @@ import ru.mipt.bit.platformer.util.Listeners.Event;
 
 public class GameDesktopLauncher implements ApplicationListener {
     private Level level;
-    private InputController inputController;
     private GraphicsController graphicsController;
 
 
@@ -21,11 +20,11 @@ public class GameDesktopLauncher implements ApplicationListener {
     public void create() {
         LevelGenerator generator = new TxtLevelGenerator("src/main/resources/pos.txt");
 //        LevelGenerator generator = new RandomLevelGenerator(5 ,5 ,7, 3);
+        graphicsController = new GraphicsController(generator.getWidth(), generator.getHeight());
         level = generator.generate();
-        graphicsController = new GraphicsController(level);
-
         level.events.subscribe(Event.ADD_GAME_OBJECT, graphicsController);
         level.events.subscribe(Event.REMOVE_GAME_OBJECT, graphicsController);
+        generator.fillLevel(level);
     }
 
     @Override
