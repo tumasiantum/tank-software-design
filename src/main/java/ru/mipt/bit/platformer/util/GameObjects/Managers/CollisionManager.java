@@ -5,7 +5,6 @@ import ru.mipt.bit.platformer.util.GameObjects.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class CollisionManager {
@@ -31,34 +30,25 @@ public class CollisionManager {
     }
 
     public boolean isFree(GridPoint2 checkCoordinates){
-        for (GameObject gameObject: this.level.getGameObjectList()){
-            if (!(gameObject instanceof Bullet)){
-                obstacleSet.add(gameObject.getCoordinates());
-            }
-        }
-        if (obstacleSet.contains(checkCoordinates)){
-            return false;
-        }
-        obstacleSet.add(checkCoordinates);
-        return true;
+        return !obstacleSet.contains(checkCoordinates);
     }
 
 
-    public void endMovement(GridPoint2 removableCoordinates){
+    public void addObstacle(GridPoint2 addCoordinates){
+        obstacleSet.add(addCoordinates);
+    }
+    public void removeObstacle(GridPoint2 removableCoordinates){
         obstacleSet.remove(removableCoordinates);
     }
 
     public void updateState(){
-        ArrayList<Bullet> deletedBullets = new ArrayList<>();
-        for (Bullet bullet: level.getBulletsArray()){
-            if (obstacleSet.contains(bullet.getCoordinates())){
-                level.removeObject(bullet);
-                deletedBullets.add(bullet);
-            }
-        }
-//        return deletedBullets;
+        deleteDiedObjects(getShootedObjects(getDeletedBullets()));
+    }
+
+    private ArrayList<GameObject> getShootedObjects(ArrayList<Bullet> deletedBullets) {
         ArrayList<GameObject> deletingObjects = new ArrayList<>();
         for (Bullet bullet: deletedBullets){
+            level.removeObject(bullet);
             for (GameObject gameObject: level.getGameObjectList()){
                 if (gameObject instanceof LiveableObject){
                     if (bullet.getCoordinates().equals(gameObject.getCoordinates())) {
@@ -70,11 +60,28 @@ public class CollisionManager {
                 }
             }
         }
+        return deletingObjects;
+    }
+
+    private ArrayList<Bullet> getDeletedBullets() {
+        ArrayList<Bullet> deletedBullets = new ArrayList<>();
+
+        for (GameObject bullet: level.getGameObjectList()) {
+            if (bullet instanceof Bullet){
+                if (obstacleSet.contains(bullet.getCoordinates())){
+                    deletedBullets.add((Bullet) bullet);
+                }
+            }
+        }
+        return deletedBullets;
+    }
+
+    private void deleteDiedObjects(ArrayList<GameObject> deletingObjects) {
         for (GameObject gameObject: deletingObjects){
             level.removeObject(gameObject);
-            endMovement(gameObject.getCoordinates());
-            if (gameObject instanceof Tank){
-                endMovement(((Tank) gameObject).getDestinationCoordinates());
+            obstacleSet.remove(gameObject.getCoordinates());
+            if (gameObject instanceof MovableObject){
+                obstacleSet.remove(((MovableObject) gameObject).getDestinationCoordinates());
             }
         }
     }

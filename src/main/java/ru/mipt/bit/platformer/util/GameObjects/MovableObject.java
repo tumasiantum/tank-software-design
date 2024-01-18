@@ -6,7 +6,12 @@ import ru.mipt.bit.platformer.util.GameObjects.Managers.Direction;
 
 public interface MovableObject {
 
-    default void move(CollisionManager collisionManager){}
-    default void startMovement(Direction movingDirection, CollisionManager collisionManager){}
+    void move(CollisionManager collisionManager);
+    void startMovement(Direction movingDirection, CollisionManager collisionManager);
+
+    GridPoint2 getDestinationCoordinates();
+
+    float getMovementProgress();
+    Direction getDirection();
 
 }

@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Scanner;
 
 public class TxtLevelGenerator implements LevelGenerator {
-    private final String filePath;
     private List<GameObject> gameObjectList = new ArrayList<>();
     private List<GridPoint2> treePositions = new ArrayList<>();
     private List<GridPoint2> tankPositions = new ArrayList<>();
@@ -24,7 +23,6 @@ public class TxtLevelGenerator implements LevelGenerator {
 
 
     public TxtLevelGenerator(String filePath) {
-        this.filePath = filePath;
         try {
             processingLine(new Scanner(Paths.get(filePath)));
         } catch (IOException e) {
@@ -63,11 +61,6 @@ public class TxtLevelGenerator implements LevelGenerator {
 
     @Override
     public Level generate() {
-//        try {
-////            processingLine(new Scanner(Paths.get(filePath)));
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
         Tank playerTank = new Tank(playerPosition, Direction.UP);
         gameObjectList.add(playerTank);
         return new Level(this.width, this.height, playerTank);
@@ -80,6 +73,7 @@ public class TxtLevelGenerator implements LevelGenerator {
         for (GameObject gameObject: gameObjectList){
             level.addObject(gameObject);
         }
+
     }
 
     private void generateGameObjects(Class gameObjectType, List<GridPoint2> coordinatesList){

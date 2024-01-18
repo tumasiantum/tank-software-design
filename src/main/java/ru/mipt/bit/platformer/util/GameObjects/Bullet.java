@@ -18,7 +18,7 @@ public class Bullet implements GameObject, MovableObject {
     public float movementProgress;
     private GridPoint2 coordinates;
     private GridPoint2 destinationCoordinates;
-    private Direction direction;
+    private final Direction direction;
 
     public Bullet(GridPoint2 coordinates, Direction direction) {
         this.movementProgress = MOVEMENT_STARTED;
@@ -32,19 +32,19 @@ public class Bullet implements GameObject, MovableObject {
         return coordinates;
     }
 
+    @Override
     public GridPoint2 getDestinationCoordinates() {
         return destinationCoordinates;
     }
 
-
+    @Override
     public float getMovementProgress() {
         return movementProgress;
     }
-
+    @Override
     public Direction getDirection() {
         return direction;
     }
-
 
 
     @Override

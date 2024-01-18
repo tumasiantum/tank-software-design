@@ -33,6 +33,7 @@ public class Tank implements GameObject, MovableObject, LiveableObject {
         return coordinates;
     }
 
+    @Override
     public GridPoint2 getDestinationCoordinates() {
         return destinationCoordinates;
     }
@@ -45,15 +46,14 @@ public class Tank implements GameObject, MovableObject, LiveableObject {
         this.rotateProgress = rotateProgress;
     }
 
+    @Override
     public float getMovementProgress() {
         return movementProgress;
     }
-
+    @Override
     public Direction getDirection() {
         return direction;
     }
-
-
 
     @Override
     public void move(CollisionManager collisionManager) {
@@ -61,7 +61,7 @@ public class Tank implements GameObject, MovableObject, LiveableObject {
         movementProgress = continueProgress(movementProgress, deltaTime, MOVEMENT_SPEED);
         if (isEqual(movementProgress, MOVEMENT_COMPLETED)) {
             if (this.coordinates != this.destinationCoordinates) {
-                collisionManager.endMovement(coordinates);
+                collisionManager.removeObstacle(coordinates);
             }
             this.coordinates = this.destinationCoordinates;
         }
@@ -72,6 +72,7 @@ public class Tank implements GameObject, MovableObject, LiveableObject {
         if (isEqual(movementProgress, MOVEMENT_COMPLETED)) {
             GridPoint2 tankTargetCoordinates = movingDirection.apply(coordinates);
             if (collisionManager.isFree(tankTargetCoordinates)) {
+                collisionManager.addObstacle(tankTargetCoordinates);
                 destinationCoordinates = tankTargetCoordinates;
                 movementProgress = MOVEMENT_STARTED;
             }
@@ -92,7 +93,6 @@ public class Tank implements GameObject, MovableObject, LiveableObject {
             Level.getInstance().addObject(bullet);
             lastCallTime = currentTime;
         }
-
     }
 
     @Override

@@ -2,6 +2,7 @@ package ru.mipt.bit.platformer.util.GameObjects;
 
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.util.GameObjects.GameObject;
+import ru.mipt.bit.platformer.util.GameObjects.Managers.Direction;
 
 public class Tree implements GameObject {
 
@@ -14,6 +15,11 @@ public class Tree implements GameObject {
     @Override
     public GridPoint2 getCoordinates() {
         return coordinates;
+    }
+
+    @Override
+    public Direction getDirection() {
+        return Direction.UP;
     }
 
 }

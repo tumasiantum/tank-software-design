@@ -7,8 +7,6 @@ import ru.mipt.bit.platformer.util.GameObjects.Managers.Direction;
 public interface GameObject {
 
     GridPoint2 getCoordinates();
-    default Direction getDirection(){
-        return Direction.UP;
-    };
+    Direction getDirection();
 
 }

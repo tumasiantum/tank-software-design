@@ -39,6 +39,9 @@ public class Level {
 
     public void addObject(GameObject gameObject){
         gameObjectList.add(gameObject);
+        if (!(gameObject instanceof Bullet)){
+            collisionManager.addObstacle(gameObject.getCoordinates());
+        }
         events.notify(Event.ADD_GAME_OBJECT, gameObject);
     }
 
@@ -47,15 +50,6 @@ public class Level {
         events.notify(Event.REMOVE_GAME_OBJECT, gameObject);
     }
 
-    public ArrayList<Bullet> getBulletsArray(){
-        ArrayList<Bullet> levelBullets = new ArrayList<>();
-        for (GameObject gameObject: gameObjectList) {
-            if (gameObject instanceof Bullet){
-                levelBullets.add((Bullet) gameObject);
-            }
-        }
-        return levelBullets;
-    }
 
     public void updateState() {
         for (GameObject gameObject: gameObjectList) {
