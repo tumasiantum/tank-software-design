@@ -8,4 +8,5 @@ public interface LiveableObject {
     void damage(Float damage);
     Boolean isAlive();
 
+    Float getHealth();
 }

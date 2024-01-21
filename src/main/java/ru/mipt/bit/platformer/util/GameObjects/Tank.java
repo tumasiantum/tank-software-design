@@ -19,6 +19,7 @@ public class Tank implements GameObject, MovableObject, LiveableObject {
     private Boolean rotateProgress = false;
     private Long lastCallTime;
     private Float lives = 2f;
+    private Float starting_lives = 2f;
 
     public Tank(GridPoint2 coordinates, Direction direction) {
         this.movementProgress = MOVEMENT_COMPLETED;
@@ -103,6 +104,11 @@ public class Tank implements GameObject, MovableObject, LiveableObject {
     @Override
     public Boolean isAlive() {
         return (this.lives > 0);
+    }
+
+    @Override
+    public Float getHealth() {
+        return this.lives/this.starting_lives;
     }
 }
 

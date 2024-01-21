@@ -20,7 +20,6 @@ public class Level {
     public Integer height;
     private CollisionManager collisionManager;
     private final List<Command> commandList = new ArrayList<>();
-    private InputController inputController = new InputController();
     private RandomController randomController = new RandomController();
     public EventManager events = new EventManager(Event.ADD_GAME_OBJECT, Event.REMOVE_GAME_OBJECT);
 
@@ -51,15 +50,12 @@ public class Level {
     }
 
 
-    public void updateState() {
+    public void updateState(ArrayList<Command> additionalCommandList) {
+        commandList.addAll(additionalCommandList);
+
         for (GameObject gameObject: gameObjectList) {
-            if (gameObject instanceof Tank){
-                if (gameObject != playerTank){
-                    produceCommands(randomController.getDirection(), randomController.getShoot(), (Tank) gameObject);
-                }
-                else {
-                    produceCommands(inputController.getDirection(), inputController.getShoot(), (Tank) gameObject);
-                }
+            if (gameObject instanceof Tank && gameObject != playerTank){
+                produceCommands(randomController.getDirection(), randomController.getShoot(), (Tank) gameObject);
             }
         }
         for (Command command: commandList) {
@@ -81,6 +77,14 @@ public class Level {
         if (shoot) {
             commandList.add(new ShootCommand(tank));
         }
+    }
+
+    public CollisionManager getCollisionManager() {
+        return collisionManager;
+    }
+
+    public Tank getPlayerTank() {
+        return playerTank;
     }
 
     public List<GameObject> getGameObjectList() {

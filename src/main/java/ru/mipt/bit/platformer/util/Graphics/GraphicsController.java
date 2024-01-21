@@ -8,23 +8,16 @@ import ru.mipt.bit.platformer.util.Graphics.Factory.BulletGraphicsFactory;
 import ru.mipt.bit.platformer.util.Graphics.Factory.GraphicsFactory;
 import ru.mipt.bit.platformer.util.Graphics.Factory.TankGraphicsFactory;
 import ru.mipt.bit.platformer.util.Graphics.Factory.TreeGraphicsFactory;
-import ru.mipt.bit.platformer.util.Graphics.Objects.GdxBulletGraphics;
-import ru.mipt.bit.platformer.util.Graphics.Objects.GdxTankGraphics;
-import ru.mipt.bit.platformer.util.Graphics.Objects.GdxTreeGraphics;
+import ru.mipt.bit.platformer.util.Graphics.Objects.Decorator.HealthBarGraphicsDecorator;
 import ru.mipt.bit.platformer.util.Graphics.Objects.GraphicsObject;
 import ru.mipt.bit.platformer.util.Listeners.Event;
 import ru.mipt.bit.platformer.util.Listeners.EventListener;
 
 import java.io.*;
-import java.net.http.WebSocket;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
-import static ru.mipt.bit.platformer.util.Graphics.GdxGameUtils.drawTextureRegionUnscaled;
-import static ru.mipt.bit.platformer.util.Graphics.GdxGameUtils.moveRectangleAtTileCenter;
 
 public class GraphicsController implements EventListener {
     private HashMap<GameObject, GraphicsObject> objectHashMap = new HashMap<>();
@@ -46,6 +39,14 @@ public class GraphicsController implements EventListener {
         }
     }
 
+    public void toggleLiveBar(){
+        for (GraphicsObject graphicsObject: objectHashMap.values()){
+            if (graphicsObject instanceof HealthBarGraphicsDecorator){
+                ((HealthBarGraphicsDecorator) graphicsObject).toggleLiveBar();
+            }
+        }
+    }
+
     private GraphicsFactory getGraphicsFactory(GameObject gameObject) {
         if (gameObject instanceof Bullet) {
             return new BulletGraphicsFactory();
@@ -60,26 +61,26 @@ public class GraphicsController implements EventListener {
 
     public void dispose(){
         for (GraphicsObject graphicsObject : objectHashMap.values()) {
-            graphicsObject.getTexture().dispose();
+            graphicsObject.dispose();
         }
         this.levelGraphics.getLevel().dispose();
         this.batch.dispose();
     }
 
-    public static void clearScreen() {
+    private static void clearScreen() {
         Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
         Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
     }
 
     public void render(){
+        clearScreen();
         // render each tile of the level
         levelGraphics.getLevelRenderer().render();
         // start recording all drawing commands
         this.batch.begin();
         // render all objects
         for (GraphicsObject graphicsObject: objectHashMap.values()) {
-            graphicsObject.renderGraphic(levelGraphics);
-            drawTextureRegionUnscaled(this.batch, graphicsObject.getTextureRegion(), graphicsObject.getRectangle(), graphicsObject.getDirection().getRotation());
+            graphicsObject.render(batch, levelGraphics);
         }
         // submit all drawing requests
         this.batch.end();

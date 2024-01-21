@@ -15,7 +15,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     private Level level;
     private GraphicsController graphicsController;
 
-
+    private InputController inputController;
     @Override
     public void create() {
         LevelGenerator generator = new TxtLevelGenerator("src/main/resources/pos.txt");
@@ -25,14 +25,12 @@ public class GameDesktopLauncher implements ApplicationListener {
         level.events.subscribe(Event.ADD_GAME_OBJECT, graphicsController);
         level.events.subscribe(Event.REMOVE_GAME_OBJECT, graphicsController);
         generator.fillLevel(level);
+        inputController = new InputController();
     }
 
     @Override
     public void render() {
-        // clear the screen
-        graphicsController.clearScreen();
-        // get time passed since the last render
-        level.updateState();
+        level.updateState(inputController.getCommandList(level, graphicsController));
         graphicsController.render();
     }
 
