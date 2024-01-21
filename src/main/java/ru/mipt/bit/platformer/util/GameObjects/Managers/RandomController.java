@@ -25,9 +25,9 @@ public class RandomController implements ActionController {
 
     @Override
     public boolean getShoot() {
-        int x = random.nextInt(22);
-        if (x < 3){
-            return false;
+        int x = random.nextInt(4);
+        if (x == 1){
+            return true;
         }
         return false;
     }
