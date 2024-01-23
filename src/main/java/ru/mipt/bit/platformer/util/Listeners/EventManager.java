@@ -1,6 +1,6 @@
 package ru.mipt.bit.platformer.util.Listeners;
 
-import ru.mipt.bit.platformer.util.GameObjects.GameObject;
+import ru.mipt.bit.platformer.util.GameEngine.GameObjects.GameObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;

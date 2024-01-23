@@ -1,8 +1,8 @@
-package ru.mipt.bit.platformer.util.GameObjects;
+package ru.mipt.bit.platformer.util.GameEngine.GameObjects;
 
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.util.GameObjects.Managers.CollisionManager;
-import ru.mipt.bit.platformer.util.GameObjects.Managers.Direction;
+import ru.mipt.bit.platformer.util.GameEngine.Direction;
+import ru.mipt.bit.platformer.util.GameEngine.Managers.CollisionManager;
 
 public interface MovableObject {
 

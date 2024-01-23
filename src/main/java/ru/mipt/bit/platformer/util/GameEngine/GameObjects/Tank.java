@@ -1,17 +1,17 @@
-package ru.mipt.bit.platformer.util.GameObjects;
+package ru.mipt.bit.platformer.util.GameEngine.GameObjects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.util.GameObjects.Managers.CollisionManager;
-import ru.mipt.bit.platformer.util.GameObjects.Managers.Direction;
-import ru.mipt.bit.platformer.util.GameObjects.TankStates.LightTank;
-import ru.mipt.bit.platformer.util.GameObjects.TankStates.TankState;
+import ru.mipt.bit.platformer.util.GameEngine.Direction;
+import ru.mipt.bit.platformer.util.GameEngine.Level;
+import ru.mipt.bit.platformer.util.GameEngine.Managers.CollisionManager;
+import ru.mipt.bit.platformer.util.GameEngine.GameObjects.TankStates.LightTank;
+import ru.mipt.bit.platformer.util.GameEngine.GameObjects.TankStates.TankState;
 
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.Graphics.GdxGameUtils.*;
 
 public class Tank implements GameObject, MovableObject, LiveableObject {
-    private static final float MOVEMENT_SPEED = 0.4f;
     public static final float MOVEMENT_COMPLETED = 1f;
     public static final int MOVEMENT_STARTED = 0;
     private TankState state;
@@ -93,11 +93,11 @@ public class Tank implements GameObject, MovableObject, LiveableObject {
         this.state = state;
     }
 
-    public void shoot() {
+    public void shoot(Level level) {
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastCallTime >= state.getRechargeTime() && state.getShootingAbility()) {
             Bullet bullet = new Bullet(direction.apply(coordinates), direction);
-            Level.getInstance().addObject(bullet);
+            level.addObject(bullet);
             lastCallTime = currentTime;
         }
     }

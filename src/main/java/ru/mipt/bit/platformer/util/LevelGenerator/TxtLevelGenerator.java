@@ -1,11 +1,13 @@
 package ru.mipt.bit.platformer.util.LevelGenerator;
 
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.util.GameObjects.GameObject;
-import ru.mipt.bit.platformer.util.GameObjects.Level;
-import ru.mipt.bit.platformer.util.GameObjects.Managers.Direction;
-import ru.mipt.bit.platformer.util.GameObjects.Tank;
-import ru.mipt.bit.platformer.util.GameObjects.Tree;
+import ru.mipt.bit.platformer.util.GameEngine.GameObjects.GameObject;
+import ru.mipt.bit.platformer.util.GameEngine.Level;
+import ru.mipt.bit.platformer.util.GameEngine.Direction;
+import ru.mipt.bit.platformer.util.GameEngine.GameObjects.Tank;
+import ru.mipt.bit.platformer.util.GameEngine.GameObjects.Tree;
+import ru.mipt.bit.platformer.util.Graphics.GraphicsController;
+import ru.mipt.bit.platformer.util.Listeners.Event;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -60,10 +62,13 @@ public class TxtLevelGenerator implements LevelGenerator {
 
 
     @Override
-    public Level generate() {
+    public Level generate(GraphicsController graphicsController) {
         Tank playerTank = new Tank(playerPosition, Direction.UP);
         gameObjectList.add(playerTank);
-        return new Level(this.width, this.height, playerTank);
+        Level level = new Level(this.width, this.height, playerTank);
+        level.events.subscribe(Event.ADD_GAME_OBJECT, graphicsController);
+        level.events.subscribe(Event.REMOVE_GAME_OBJECT, graphicsController);
+        return level;
     }
 
     @Override

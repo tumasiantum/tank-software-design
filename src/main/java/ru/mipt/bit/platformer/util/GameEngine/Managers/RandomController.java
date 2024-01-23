@@ -1,4 +1,6 @@
-package ru.mipt.bit.platformer.util.GameObjects.Managers;
+package ru.mipt.bit.platformer.util.GameEngine.Managers;
+
+import ru.mipt.bit.platformer.util.GameEngine.Direction;
 
 import java.util.Random;
 

@@ -1,6 +1,6 @@
 package ru.mipt.bit.platformer.util.Graphics.Factory;
 
-import ru.mipt.bit.platformer.util.GameObjects.GameObject;
+import ru.mipt.bit.platformer.util.GameEngine.GameObjects.GameObject;
 import ru.mipt.bit.platformer.util.Graphics.Objects.GraphicsObject;
 
 public interface GraphicsFactory {

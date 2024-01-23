@@ -4,9 +4,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
-import ru.mipt.bit.platformer.util.GameObjects.GameObject;
-import ru.mipt.bit.platformer.util.GameObjects.Managers.Direction;
-import ru.mipt.bit.platformer.util.GameObjects.Bullet;
+import ru.mipt.bit.platformer.util.GameEngine.GameObjects.GameObject;
+import ru.mipt.bit.platformer.util.GameEngine.Direction;
+import ru.mipt.bit.platformer.util.GameEngine.GameObjects.Bullet;
 import ru.mipt.bit.platformer.util.Graphics.GdxLevelGraphics;
 
 import static ru.mipt.bit.platformer.util.Graphics.GdxGameUtils.createBoundingRectangle;

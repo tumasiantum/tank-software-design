@@ -1,6 +1,6 @@
-package ru.mipt.bit.platformer.util.GameObjects.TankStates;
+package ru.mipt.bit.platformer.util.GameEngine.GameObjects.TankStates;
 
-import ru.mipt.bit.platformer.util.GameObjects.Tank;
+import ru.mipt.bit.platformer.util.GameEngine.GameObjects.Tank;
 
 public class HeavyTank extends TankState {
     float health;

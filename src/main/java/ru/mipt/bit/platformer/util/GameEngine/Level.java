@@ -1,39 +1,33 @@
-package ru.mipt.bit.platformer.util.GameObjects;
+package ru.mipt.bit.platformer.util.GameEngine;
 
-import ru.mipt.bit.platformer.util.GameObjects.Managers.CollisionManager;
-import ru.mipt.bit.platformer.util.GameObjects.Managers.Direction;
-import ru.mipt.bit.platformer.util.GameObjects.Managers.InputController;
-import ru.mipt.bit.platformer.util.GameObjects.Managers.RandomController;
-import ru.mipt.bit.platformer.util.GameObjects.Mover.Command;
-import ru.mipt.bit.platformer.util.GameObjects.Mover.Commands.*;
+import ru.mipt.bit.platformer.util.GameEngine.GameObjects.Bullet;
+import ru.mipt.bit.platformer.util.GameEngine.GameObjects.GameObject;
+import ru.mipt.bit.platformer.util.GameEngine.GameObjects.MovableObject;
+import ru.mipt.bit.platformer.util.GameEngine.GameObjects.Tank;
+import ru.mipt.bit.platformer.util.GameEngine.Managers.CollisionManager;
+import ru.mipt.bit.platformer.util.GameEngine.Managers.RandomController;
+import ru.mipt.bit.platformer.util.GameEngine.Commands.Command;
+import ru.mipt.bit.platformer.util.GameEngine.Commands.MovementCommand;
+import ru.mipt.bit.platformer.util.GameEngine.Commands.ShootCommand;
 import ru.mipt.bit.platformer.util.Listeners.Event;
-import ru.mipt.bit.platformer.util.Listeners.EventListener;
 import ru.mipt.bit.platformer.util.Listeners.EventManager;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Level {
-    private static Level level;
-    private List<GameObject> gameObjectList = new ArrayList<>();
-    private Tank playerTank;
-    public Integer width;
-    public Integer height;
-    private CollisionManager collisionManager;
+    private final List<GameObject> gameObjectList = new ArrayList<>();
+    private final Tank playerTank;
+    private final CollisionManager collisionManager;
     private final List<Command> commandList = new ArrayList<>();
-    private RandomController randomController = new RandomController();
-    public EventManager events = new EventManager(Event.ADD_GAME_OBJECT, Event.REMOVE_GAME_OBJECT);
+    private final RandomController randomController = new RandomController();
+    public EventManager events;
 
 
     public Level(Integer width, Integer height, Tank playerTank) {
-        this.width = width;
-        this.height = height;
         this.playerTank = playerTank;
-        this.collisionManager = new CollisionManager(this);
-        level = this;
-    }
-
-    public static Level getInstance() {
-        return level;
+        this.collisionManager = new CollisionManager(width, height);
+        this.events = new EventManager(Event.ADD_GAME_OBJECT, Event.REMOVE_GAME_OBJECT);
     }
 
     public void addObject(GameObject gameObject){
@@ -67,7 +61,7 @@ public class Level {
             }
         }
         commandList.clear();
-        collisionManager.updateState();
+        collisionManager.updateState(this);
     }
 
     private void produceCommands(Direction direction, Boolean shoot, Tank tank) {
@@ -75,7 +69,7 @@ public class Level {
             commandList.add(new MovementCommand(collisionManager, direction, tank));
         }
         if (shoot) {
-            commandList.add(new ShootCommand(tank));
+            commandList.add(new ShootCommand(this, tank));
         }
     }
 

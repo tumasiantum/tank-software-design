@@ -1,13 +1,12 @@
-package ru.mipt.bit.platformer.util.GameObjects.Managers;
+package ru.mipt.bit.platformer.util.GameEngine.Managers;
 
 import com.badlogic.gdx.Gdx;
-import ru.mipt.bit.platformer.util.GameObjects.Bullet;
-import ru.mipt.bit.platformer.util.GameObjects.Level;
-import ru.mipt.bit.platformer.util.GameObjects.Mover.Command;
-import ru.mipt.bit.platformer.util.GameObjects.Mover.Commands.MovementCommand;
-import ru.mipt.bit.platformer.util.GameObjects.Mover.Commands.ShootCommand;
-import ru.mipt.bit.platformer.util.GameObjects.Mover.Commands.ToggleHealthBarCommand;
-import ru.mipt.bit.platformer.util.GameObjects.Tank;
+import ru.mipt.bit.platformer.util.GameEngine.Direction;
+import ru.mipt.bit.platformer.util.GameEngine.Level;
+import ru.mipt.bit.platformer.util.GameEngine.Commands.Command;
+import ru.mipt.bit.platformer.util.GameEngine.Commands.MovementCommand;
+import ru.mipt.bit.platformer.util.GameEngine.Commands.ShootCommand;
+import ru.mipt.bit.platformer.util.GameEngine.Commands.ToggleHealthBarCommand;
 import ru.mipt.bit.platformer.util.Graphics.GraphicsController;
 
 import java.util.ArrayList;
@@ -15,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.badlogic.gdx.Input.Keys.*;
-import static com.badlogic.gdx.Input.Keys.D;
 
 public class InputController implements ActionController {
     ArrayList<Command> commandList = new ArrayList<>();
@@ -32,7 +30,7 @@ public class InputController implements ActionController {
     }
 
     private final Map<Integer, Direction> keyToDirectionMap = new HashMap<>();
-    public void addMapping(int key, Direction direction) {
+    private void addMapping(int key, Direction direction) {
         keyToDirectionMap.put(key, direction);
     }
 
@@ -74,7 +72,7 @@ public class InputController implements ActionController {
             commandList.add(new MovementCommand(level.getCollisionManager(), direction, level.getPlayerTank()));
         }
         if (shoot) {
-            commandList.add(new ShootCommand(level.getPlayerTank()));
+            commandList.add(new ShootCommand(level, level.getPlayerTank()));
         }
         if (livesToggle) {
             commandList.add(new ToggleHealthBarCommand(graphicsController));

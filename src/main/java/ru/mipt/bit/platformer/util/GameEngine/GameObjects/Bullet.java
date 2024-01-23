@@ -1,9 +1,9 @@
-package ru.mipt.bit.platformer.util.GameObjects;
+package ru.mipt.bit.platformer.util.GameEngine.GameObjects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.util.GameObjects.Managers.CollisionManager;
-import ru.mipt.bit.platformer.util.GameObjects.Managers.Direction;
+import ru.mipt.bit.platformer.util.GameEngine.Direction;
+import ru.mipt.bit.platformer.util.GameEngine.Managers.CollisionManager;
 
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.Graphics.GdxGameUtils.continueProgress;

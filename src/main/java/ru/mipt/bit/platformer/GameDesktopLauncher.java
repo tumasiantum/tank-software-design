@@ -1,15 +1,13 @@
 package ru.mipt.bit.platformer;
 
-import ru.mipt.bit.platformer.util.GameObjects.Level;
-import ru.mipt.bit.platformer.util.GameObjects.Managers.InputController;
-import ru.mipt.bit.platformer.util.Graphics.GraphicsController;
-
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import ru.mipt.bit.platformer.util.GameEngine.Level;
+import ru.mipt.bit.platformer.util.GameEngine.Managers.InputController;
+import ru.mipt.bit.platformer.util.Graphics.GraphicsController;
 import ru.mipt.bit.platformer.util.LevelGenerator.LevelGenerator;
 import ru.mipt.bit.platformer.util.LevelGenerator.TxtLevelGenerator;
-import ru.mipt.bit.platformer.util.Listeners.Event;
 
 public class GameDesktopLauncher implements ApplicationListener {
     private Level level;
@@ -21,9 +19,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         LevelGenerator generator = new TxtLevelGenerator("src/main/resources/pos.txt");
 //        LevelGenerator generator = new RandomLevelGenerator(5 ,5 ,7, 3);
         graphicsController = new GraphicsController(generator.getWidth(), generator.getHeight());
-        level = generator.generate();
-        level.events.subscribe(Event.ADD_GAME_OBJECT, graphicsController);
-        level.events.subscribe(Event.REMOVE_GAME_OBJECT, graphicsController);
+        level = generator.generate(graphicsController);
         generator.fillLevel(level);
         inputController = new InputController();
     }
